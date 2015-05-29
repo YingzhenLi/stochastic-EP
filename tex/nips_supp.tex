@@ -1,0 +1,129 @@
+\documentclass{article} % For LaTeX2e
+\usepackage{nips15submit_e,times}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{bm, subfigure}
+\usepackage{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{algorithm, algorithmic}
+\usepackage{graphicx}
+
+%\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
+
+
+\newtheorem{theorem}{Theorem}
+
+\mathchardef\mhyphen="2D
+
+\title{Stochastic Expectation Propagation: Supplementary Material}
+
+
+\author{
+Yingzhen Li \\
+Department of Engineering\\
+University of Cambridge\\
+Cambridge, CB2 1PZ, UK \\
+\texttt{yl494@cam.ac.uk} \\
+\And
+Richard E.~Turner \\
+Affiliation \\
+Address \\
+\texttt{ret26@cam.ac.uk} \\
+}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to \LaTeX{} to determine where to break
+% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
+% puts 3 of 4 authors names on the first line, and the last on the second
+% line, try using \AND instead of \And before the third author name.
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+%\nipsfinalcopy % Uncomment for camera-ready version
+
+\begin{document}
+
+
+\maketitle
+
+\section*{Notations}
+This supplementary material provides further explanations and proofs of the results in the main paper. For convenience we conduct all the analyses on exponential families, and the results can be extended to general situations accordingly. We assume that both the approximation $q(\bm{\theta})$ and the model $p(\bm{x} | \bm{\theta})$ are from minimal exponential families
+\begin{align}
+\mathcal{P} &= \{p(\bm{x} | \bm{\theta}) = \exp \left( \langle \beta(\bm{\theta}), \psi(\bm{x}) \rangle - A(\bm{\theta}) \right) |\ \bm{\theta} \in \bm{\Theta} \ s.t.~ A(\bm{\theta}) < \infty \}, \\
+\mathcal{Q} &= \{q(\bm{\theta}) = \exp \left( \langle \bm{\lambda}_q, \phi(\bm{x}) \rangle - A(\bm{\lambda}_q) \right) |\ \bm{\lambda}_q \in \bm{\Lambda} \ s.t.~ A(\bm{\lambda}_q) < \infty \},
+\end{align}
+respectively, where $A(\cdot)$ represents the log partition function to guarantee a valid distribution. We also assume the observations $D = \{\bm{x}_i\}_{i=1}^N$ are i.i.d~samples from some underlying distribution. Models containing (local) hidden variables can be represented accordingly and the results apply as well. We also assume that the prior $p_0$ and the approximating factors $f$, $f_i$ belong to $\mathcal{Q}$ with natural parameter $\bm{\lambda}_0$, $\bm{\lambda}$ and $\bm{\lambda}_i$. Further, we write the true posterior as in exponential family
+\begin{equation}
+\mathcal{\tilde{P}} = \{p(\bm{\theta}) = \exp \left( \langle \bm{\eta}, \Phi(\bm{\theta}) \rangle - A(\bm{\eta}) \right) |\ \bm{\eta} \in \bm{H} \ s.t.~ A(\bm{\eta}) < \infty \}, \\
+\end{equation}
+and the sufficient statistics $\Phi(\bm{\theta}) = [\phi(\bm{\theta}), \beta(\bm{\theta}), A(\bm{\theta})]$ by assuming $\phi$, $\beta$ and $A$ are linearly independent wrt.~operation $E_{\tilde{p}}[\cdot], \forall \tilde{p} \in \tilde{\mathcal{P}}$ w.l.o.g. It is straight-forward that the true posterior has natural parameter $\bm{\eta}_p = [\bm{\lambda}_0, \sum_{i} \psi(\bm{x}_i), -N]$, and the tilted distributions $\tilde{p}_i$ are also in this family with $\bm{\eta}_i = [\bm{\lambda}_{-i}, \psi(\bm{x}_i), -1]$ for normal EP or $\bm{\eta}_i = [\bm{\lambda}_{-1}, \psi(\bm{x}_i), -1]$ for stochastic EP. The approximation family $\mathcal{Q}$ is a subset of $\tilde{\mathcal{P}}$ as well and we write $\bm{\eta}_q = [\bm{\lambda}_q, \bm{0}, 0]$. In the rest of the paper we also write $\bm{\lambda}_q \leftarrow \mathtt{proj}[\bm{\eta}]$ to denote the M-projection of distributions from distributions in $\mathcal{\tilde{P}}$ to $\mathcal{Q}$.
+
+\section*{Proofs for the main results}
+\subsection*{Equivalence between ``variational'' AEP and VB}
+We briefly discussed the equivalence between ``variational'' AEP and VB and we provide a formal proof here. To help the proof we recall the AEP approximation structure with power EP style no-damped update. 
+%
+\begin{align}
+\bm{\lambda}_q &\buildrel\triangle\over = \bm{\lambda}_0 + \sum_{i=1}^N \bm{\lambda}_i, \\
+\bm{\lambda}_i &\buildrel\triangle\over = \mathtt{proj}[\bm{\eta}_i] - \bm{\lambda}_{-1}, \\
+\bm{\lambda}_{-1} &\buildrel\triangle\over = \bm{\lambda}_0 + \frac{N-1}{N} \sum_{i=1}^N \bm{\lambda}_i.
+\end{align}
+%
+Note that we can also apply direct global optimisation (i.e.~VB) to obtain $\bm{\lambda}_q$. Now we state the following theorem. 
+%
+\begin{theorem}
+The ``variational'' averaged expectation propagation algorithm, when converged to a fixed point, returns a local optimum of variational Bayes.
+\end{theorem}
+\begin{proof}
+Consider the same factorisation structure in (4) for both VB and the ``variational'' AEP. VB optimise the following KL divergence wrt.~$q(\bm{\theta})$:
+\begin{equation}
+KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \langle \bm{\lambda}_q, E_q \phi(\bm{\theta}) \rangle - A(\bm{\lambda}_q) - \langle \bm{\eta}_p, \Phi(\bm{\theta}) \rangle + A(\bm{\eta}_p),
+\end{equation}
+where we have $\bm{\eta}_p = (\bm{\lambda}_0, \sum_{i} \psi(\bm{x}_i), -N)$. Using the fact that $\mathcal{Q} \subset \tilde{\mathcal{P}}$ and $\bm{\eta}_q = [\bm{\lambda}_q, \bm{0}, 0]$,
+\begin{equation}
+\nabla_{\bm{\lambda}_q}^{VB} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \langle \bm{\lambda}_q - \bm{\lambda}_0, E_q \phi(\bm{\theta}) \rangle - \langle \sum_{i} \psi(\bm{x}_i), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle + N \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
+\end{equation}
+On the other hand, the inner loop of the ``variational'' AEP finds the optimiser of the following divergence
+\begin{equation}
+KL(q(\bm{\theta}) || \tilde{p}_i(\bm{\theta})) = \langle \bm{\lambda}_q, E_q \phi(\bm{\theta}) \rangle - A(\bm{\lambda}_q) - \langle \bm{\eta}_i, \Phi(\bm{\theta}) \rangle + A(\bm{\eta}_i).
+\end{equation}
+Now the local update we are interested in is $\bm{\lambda}_i = \bm{\lambda}_q - \bm{\lambda}_{-1}$, and we treat the cavity parameter $\bm{\lambda}_{-1}$ as a constant in this optimisation. Similarly we obtain the graident wrt.~$\bm{\lambda}_i$
+\begin{equation}
+\nabla_{\bm{\lambda}_i}^{AEP} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \langle \bm{\lambda}_q - \bm{\lambda}_{-1}, E_q \phi(\bm{\theta}) \rangle - \langle \psi(\bm{x}_i), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle +  \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
+\end{equation}
+If consider the ``variational'' AEP as a gradient descent method, the gradient of the global parameters is constructed by summing the gradients of the local parameters. Readers can verify that the gradient of the global parameter is equivalent to the gradient of VB objective, i.e.
+\begin{equation}
+\nabla_{\bm{\lambda}_q}^{VB} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \sum_i \nabla_{\bm{\lambda}_i}^{AEP} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \nabla_{\bm{\lambda}_q}^{AEP} KL(q(\bm{\theta}) || p(\bm{\theta} | D)).
+\end{equation}
+This implies that the fixed points of ``variational'' AEP are also stationary points of VB.
+\end{proof}
+
+
+\subsection*{Proofs for the large-data limit results}
+\begin{theorem}
+When the number of observations goes to infinity, stochastic expectation propagation minimises the same objective as stochastic variational inference in each iteration.
+\end{theorem}
+\begin{proof}
+We assumed minimal exponential families in the notations, so there exists a bijection between natural parameters $\bm{\lambda}_q$ and mean parameters $\bm{m}_q \buildrel\triangle\over = E_q \phi(\bm{\theta})$. We denote $\bm{m}_{\alpha}[p]$ as the mean parameter of the $\alpha$-projection of some distribution $p$ onto the approximation family $\mathcal{Q}$. Section 7 of \cite{amari:alpha_proj} showed that the path $f(\alpha) = q(\bm{\theta}; \bm{m}_{\alpha}[p])$, $\alpha \in [-1, 1]$ in $\mathcal{Q}$ is a continuous path connecting the answers of $\mhyphen 1, 1$-projections. Recall the SEP inner-loop that the local projection $\mathtt{proj}[\tilde{p}_i(\bm{\theta})]$ is equivalent to the $\alpha$-projection of $p(\bm{\theta}) \buildrel\triangle\over = p(\bm{\theta} | \{ \bm{x}_i\}^N)$ with $\alpha = \mhyphen 1 + 2/N$. Applying the large-data limit returns
+\begin{equation}
+\lim_{N \rightarrow \infty} \mathtt{proj}[\tilde{p}_i(\bm{\theta})] = \arg\min_{q} KL(q(\bm{\theta}) || p(\bm{\theta} | \{ \bm{x}_i\}^N)), \forall i.
+\end{equation}
+\end{proof}
+
+\textbf{Remark.}
+The $\mhyphen 1$-projection is non-unique in many cases, so there is no guarantee that SEP and SVI obtain the same minimiser of the variational KL even when with the same initialisations. Also AEP as the expectation of SEP might not converge to a VB answer since the projection results might be unbounded. In math,
+\begin{equation}
+\lim_{N \rightarrow \infty} \frac{1}{N} \sum_{i=1}^N \mathtt{proj}[\bm{\eta}_i] \neq \lim_{N \rightarrow \infty} \frac{1}{N} \sum_{i=1}^N \lim_{N \rightarrow \infty} \mathtt{proj}[\bm{\eta}_i].
+\end{equation}
+See Fatou's lemma for more detailed proof.
+
+
+\subsubsection*{References}
+\renewcommand{\section}[2]{}
+\bibliographystyle{apalike}
+\bibliography{nips_sep}
+
+
+\end{document}

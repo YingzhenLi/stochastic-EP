@@ -1,0 +1,63 @@
+
+
+\section{Stochastic approximation for expectation propagation}
+%short review on EP
+We start from reviewing the very first EP algorithm. In many machine learning problems a probabilistic model $p(\bm{x}|\bm{\theta})$, parametrised by a $d$-dimensional vector $\bm{\theta}$ and from a distribution family $\mathcal{P}$, is introduced to estimate the underlying data distribution. Bayesian methods require posterior computation after observing dataset $D = \{\bm{x}_i \}_{i=1}^N$ using Bayes Rule: 
+\begin{equation}
+p(\bm{\theta} | D) \propto p_0(\bm{\theta}) \prod_{i=1}^{N} p(\bm{x}_i | \bm{\theta}),
+\end{equation}
+however this posterior is often in some intractable family $\tilde{\mathcal{P}}$ for many powerful probabilistic models. Expectation propagation approximates the true posterior with a suitable distribution $q(\bm{\theta}) \in \mathcal{Q}$, which factorises over likelihood terms
+\begin{equation}
+q(\bm{\theta}) \propto p_0(\bm{\theta}) \prod_{i=1}^{N} f_i(\bm{\theta}),
+\end{equation}
+and iteratively refines each factor (or site) $f_i(\bm{\theta})$ by matching the moments of the corresponded single datapoint posterior. To be precise, an EP iteration begins with removing the selected factor $f_i(\bm{\theta})$ to form the cavity distribution $q_{-i}(\bm{\theta})$, then uses it as the prior distribution to incorporate the current likelihood $p(\bm{x}_i| \bm{\theta})$. The local posterior $\tilde{p}_i(\bm{\theta}) \propto p(\bm{x}_i|\bm{\theta}) q_{-i}(\bm{\theta})$ is also referred as the tilted distribution, which is in the $\tilde{\mathcal{P}}$ family as well. Next EP proposes a moment projection (M-projection) \cite{amari:ig} or moment matching step to approximate the tilted distribution by minimising $KL(p(\bm{\theta})||q(\bm{\theta}))$ wrt.~$q(\bm{\theta})$, and finally recovers the new updates of the current factor $f_i(\bm{\theta}) \buildrel\propto\over \leftarrow q(\bm{\theta}) / q_{-1}(\bm{\theta})$.
+%
+We summarise the update procedure for a single factor in Algorithm \ref{alg:ep}, where $\mathtt{proj}[p(\bm{\theta})]$ denotes the moment projection operator. EP takes the advantage of local computations in which the single datapoint posterior $\tilde{p}_i(\bm{\theta})$ can be far easier to handle compared to the full posterior $p(\bm{\theta}| D)$. 
+
+% SEP
+EP has been shown very successful in previous investigations as mentioned, however very little work has been done on large datasets due to its large memory consumption. It requires the program to store every local approximator $f_i(\bm{\theta})$, resulting in space complexity $\mathcal{O}(Nd^2)$ if using Gaussians. To eliminate the linear factor $N$ in the storage requirement, we propose a factor-tying approach by defining a new approximation structure
+\begin{equation}
+q(\bm{\theta}) \propto f(\bm{\theta})^N p_0(\bm{\theta}),
+\end{equation}
+and run EP by pretending the $N$ copies as independent factors. We sketch the learning procedure for one update in Algorithm \ref{alg:sep}, and refer it as stochastic expectation propagation (SEP) since it incorporates information from a single sample to all the tied factors. In practice memory allocation for $f(\bm{\theta})$ is unnecessary because $f(\bm{\theta}) \propto (q(\bm{\theta}) / p_0(\bm{\theta}))^{\frac{1}{N}}$ and $q_{-1}(\bm{\theta}) \propto q(\bm{\theta})^{1 - \frac{1}{N}} p_0(\bm{\theta})^{\frac{1}{N}}$. Hence our approach with Gaussian factors reduces the storage requirement drastically to $\mathcal{O}(d^2)$, the same as other global approximation algorithms, and enables applications to very large datasets. 
+
+\begin{figure}[!t]
+%
+\begin{minipage}[t]{0.45\linewidth}
+\centering
+\begin{algorithm}[H] 
+\caption{Expectation Propagation} 
+\label{alg:ep} 
+\begin{algorithmic}[1] 
+	\STATE choose a factor $f_i$ to refine:
+	\STATE compute cavity distribution \\$q_{-i}(\bm{\theta}) \propto q(\bm{\theta}) / f_i(\bm{\theta})$
+	\STATE compute tilted distribution \\$\tilde{p}_i(\bm{\theta}) \propto p(\bm{x}_i|\bm{\theta}) q_{-i}(\bm{\theta})$
+	\STATE moment matching: \\$f_i(\bm{\theta}) \leftarrow \mathtt{proj}[\tilde{p}_i(\bm{\theta})] / q_{-i}(\bm{\theta}) $
+	\STATE inclusion: $q(\bm{\theta}) \leftarrow q_{-i}(\bm{\theta}) f_i(\bm{\theta})$
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}
+\quad \quad
+\begin{minipage}[t]{0.45\linewidth}
+\centering
+\begin{algorithm}[H]
+\caption{Stochastic EP} 
+\label{alg:sep} 
+\begin{algorithmic}[1] 
+%\STATE initialize $\{\tilde{f}_a\}$
+	\STATE sample $\bm{x}_i \sim D$ to incorporate:
+	\STATE compute cavity distribution \\ $q_{-1}(\bm{\theta}) \propto q(\bm{\theta}) / f(\bm{\theta})$
+	\STATE compute tilted distribution \\$\tilde{p}_i(\bm{\theta}) \propto p(\bm{x}_i|\bm{\theta}) q_{-1}(\bm{\theta})$
+	\STATE moment matching: \\$f_i(\bm{\theta}) \leftarrow \mathtt{proj}[\tilde{p}_i(\bm{\theta})] / q_{-1}(\bm{\theta}) $
+	\STATE inclusion: $q(\bm{\theta}) \leftarrow q_{-1}(\bm{\theta}) f_i(\bm{\theta})$
+	\STATE \textit{update} $f(\bm{\theta}) \leftarrow f(\bm{\theta})^{1 - \frac{1}{N}} f_i(\bm{\theta})^{\frac{1}{N}}$
+\end{algorithmic}
+\end{algorithm}
+\end{minipage} 
+%
+\end{figure}
+
+%
+We also consider Assumed density filtering (ADF) \cite{maybeck:adf}\cite{minka:ep}, the streaming version of EP, and show its connection to SEP. ADF successively incorporates the incoming datapoints to the approximate posterior by using the posterior computed on previous samples as the current prior. Hence the algorithm only stores the global posterior and is scalable on large datasets. However it always treats the next input as a new observation, making ADF with multiple passes of data flawed in nature. 
+%
+We re-introduce SEP as to correct ADF by re-scaling the parameters (line 2 in Algorithm \ref{alg:sep}). In this way SEP preserves the advantage of ADF in memory consumption but also retains the correct uncertainty level as full EP. Also multiple passes of datasets helps $q(\bm{\theta})$ ``forget" the bad approximations gradually, making SEP much more robust to observation ordering. 
