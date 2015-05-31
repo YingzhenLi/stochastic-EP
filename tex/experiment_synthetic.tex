@@ -1,1 +1,51 @@
-\subsection{Synthetic data}
+We evaluate the proposed stochastic expectation propagation on both synthetic and real-world data with different tasks. In synthetic tests we also compare the approximations against the true posterior: we use the No-U-Turn sampler (NUTS) \cite{hoffman:nuts} implemented in \texttt{stan}\footnote{\url{http://mc-stan.org/pystan.html}} to sample $\bm{\theta}$ from the true posterior, and approximate it with a Gaussian using sample mean and covariance. 
+
+
+we compare the approximate posterior against the true posterior $p(\bm{\theta}|D)$ formed with NUTS sampling, where . We next test classification and regression tasks on several real-world datasets using neural networks trained with probabilistic back-propagation \cite{miguel:pbp}, which is based on ADF in the first place. We modify the available code\footnote{\url{https://github.com/HIPS/Probabilistic-Backpropagation}} to support full EP and SEP training and compare their performances to the reported ADF results. For brevity we omit the mathematical details of analytical EP solutions for all the models and provide them in the supplementary material instead.
+
+%
+%%%% FIRST EXAMPLE %%%%
+\subsection{Mixture of Gaussians for clustering}
+We start from performing clustering using mixture of Gaussians, where the simplified task called clutter problem is the first motivating example studied in EP literature \cite{minka:ep}. We generate a collection of 4-dimensional observations $\{\bm{x}_n\}_{n=1}^N$ from mixture of 4 Gaussian distributions, where each of the Gaussian components $\mathcal{N}(\bm{x}; \bm{\mu}_k, \sigma^2 I)$ has the mean $\bm{\mu}_k$ sampled from another pre-defined Gaussian distribution $\mathcal{N}(\bm{\mu}; \bm{m}, \Sigma)$. We choose a uniform prior on the mixture components $p_0(\bm{h}_i = k) \propto 1$ and simulate 200 datapoints $\bm{x}_i | \bm{y}_i \sim \mathcal{N}(\bm{x}_i; \bm{\mu}_{\bm{y}_i}, \sigma^2 I)$ with $\sigma = 0.5$ to make the clusters well-separated. Now for the clustering task, we construct a Gaussian mixture model with uniform prior on $\bm{h}_i$ and independent prior $\mathcal{N}(\bm{\mu}_k; \bm{m}_k, 10I)$ on the Gaussian means, with $\bm{m}_k$ randomly sampled from $\mathcal{N}(\bm{m}; \bm{0}, I)$. We also choose the same likelihood term as the data simulation procedure. EP, SEP and ADF are applied to approximate the posterior of $\bm{\theta} = \{ \bm{\mu}_k \}$ with Gaussians and $\{\bm{h}_i\}$ with categorical distribution, though as discussed the storage for the latter terms is not required. 
+
+Figure \ref{fig:gmm_visualised} visualises the estimated posterior mean and covariance for each $\bm{\mu}_k$ after 50 iterations. We also show the ground truth labels in the first graph and the predicted cluster assignments in the rest using different colours, indicating that EP inference works well for all methods. Notice that the inference step strongly depends on the accurate estimation of posterior mode, and ADF converges towards a maximum a posteriori (MAP) estimation of the parameters $\bm{\theta}$. However ADF is over-confident compared with the sampling methods, EP and SEP, in which the variance shrinks towards zero. On the other hand, SEP captures the uncertainty well and returns nearly identical approximations as full EP. (Yingzhen: How to quantise the approximation error? Computing KL between two GMMs seems to be hard... )
+
+%\begin{figure}
+%\centering
+%\def\svgwidth{0.45\linewidth}
+%\subfigure[\label{fig:gmm_visualised}]{
+%\input{fig/gmm1.pdf_tex}}
+%\caption{Posterior approximation for the mean of the Gaussian components. The truth part is estimated using NUTS.}
+%\end{figure}
+
+%%%% SECOND EXAMPLE %%%%
+\subsection{Bayesian logistic regression}
+We next consider Bayesian logistic regression models. For tractable EP computations we choose Probit regression $P(\bm{y} = 1) = \Phi(\bm{\theta}^T \bm{x})$. 5,000 datapoints $D = \{ (\bm{x}_n, \bm{y}_n) \}_{n=1}^{5000}$ are simulated from a pre-defined ground-truth model, where the $d = 20$ dimensional inputs $\bm{x}$ are sampled from a mixture of $J = 5$ Gaussians, and the labels $\{\bm{y}_i\}$ are regressed from a Probit unit with $\bm{\theta}_{true} \sim \mathcal{N}(\bm{\theta}; \bm{0}, I)$. The candidate methods for comparison include SEP, EP and ADF with multiple passes, where we also study the effect minibatch size for SEP. We put a Gaussian prior $\mathcal{N}(\bm{\theta}; \bm{0}, \sigma^2 I)$, $\sigma = 1.5$, on the coefficients $\bm{\theta}$, and measure the performance by computing an approximate $KL(p(\bm{\theta}|D) || q(\bm{\theta}))$ using the Gaussian approximation of $p(\bm{\theta}|D)$ from NUTS sampling. 
+
+We test all methods on synthetic data where the five Gaussians are indistinguishable, and results in Figure \ref{fig:sep_probit} show that SEP learns the posterior much faster than full EP and is converging to the same local optimum. Using SEP with larger size of minibatch is more robust with the price of slower learning. ADF also learns the posterior mean, however the variance estimation shrinks towards zero, thus the ADF approximation deviates from the true posterior. 
+%
+We also investigate the efficiency of DAEP when the observations are generated from very different clusters. Now the  inputs are sampled from a mixture of five very different Gaussian distributions, and we partition the datasets into $K$ minibatches with each of them containing datapoints from the same cluster. Figure \ref{fig:daep_probit} shows that SEP converges to slightly worse approximations as it only maintains the global posterior. In contrast DAEP performs nearly identical to full EP, both using local factors, and the number of minibatches $K$ has little effect on the performance as long as $K \geq J$. This implies that the contributions of observations from the same cluster are very similar, so using a single factor for one cluster is preferred to obtain better approximations while memory efficient.
+
+Lastly we test the performance of SEP when using sampling methods to compute the moments, where the code is adjusted from \texttt{ep-stan}\footnote{\url{https://github.com/gelman/ep-stan}}. We re-use the same settings for probit regression except that we change the probit function to sigmoid function, making the EP computations intractable analytically. We partition the dataset into $K = 20$ minibatches and put local factors, if necessary, on the product of likelihood terms in the same minibatch. show the results in Figure \ref{fig:sep_logit}.
+
+\begin{figure}
+\centering
+\def\svgwidth{0.3\linewidth}
+\subfigure[\label{fig:sep_probit}]{
+\input{fig/sep_probit.pdf_tex}}
+%
+%\hspace{0.01in}
+%
+\def\svgwidth{0.3\linewidth}
+\subfigure[\label{fig:daep_probit}]{
+\input{fig/daep.pdf_tex}}
+%
+%\hspace{0.01in}
+%
+\def\svgwidth{0.3\linewidth}
+\subfigure[\label{fig:sep_logit}]{
+\input{fig/sep_logit.pdf_tex}}
+
+\caption{Performance of EP methods on Bayesian logistic regression, where we use probit function for (a)(b) and sigmoid function for (c). The inputs of (b) are generated from well-separated Gaussians.}
+
+\end{figure}

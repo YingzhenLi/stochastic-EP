@@ -1,1 +1,55 @@
 \subsection{Probabilistic back-propagation}
+
+\begin{table} 
+\small
+\centering \caption{ Average test results all methods. } \label{tab:results} \begin{tabular}{l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}}\hline 
+{} & \multicolumn{6}{c}{RMSE} & \multicolumn{6}{c}{test log-likelihood} \\
+\bf{Dataset}&\multicolumn{2}{c}{\bf{ ADF }}&\multicolumn{2}{c}{\bf{ SEP }}&\multicolumn{2}{c}{\bf{ EP }} &\multicolumn{2}{c}{\bf{ ADF }}&\multicolumn{2}{c}{\bf{ SEP }}&\multicolumn{2}{c}{\bf{ EP }} \\ \hline 
+%
+Kin8nm&0.098&0.0007&\bf{0.088}&\bf{0.0009}&0.089&0.0006
+	&0.896&0.006&\bf{1.013}&\bf{0.011}&1.005&0.007\\ 
+%
+Naval&0.006&0.0000&\bf{0.002}&\bf{0.0000}&0.004&0.0000
+	&3.731&0.006&\bf{4.590}&\bf{0.014}&4.207&0.011\\  
+%
+Power&\bf{4.124}&\bf{0.0345}&4.165&0.0336&4.191&0.0349
+	&\bf{-2.837}&\bf{0.009}&-2.846&0.008&-2.852&0.008\\
+% 
+Protein&4.727&0.0112&\bf{4.670}&\bf{0.0109}&4.748&0.0137
+	&-2.973&0.003&\bf{-2.961}&\bf{0.003}&-2.979&0.003\\ 
+%
+Wine&\bf{0.635}&\bf{0.0079}&0.650&0.0082&0.637&0.0076
+	&-0.968&0.014&-0.976&0.013&\bf{-0.958}&\bf{0.011}\\  
+%
+Year&\bf{8.879}&\bf{   NA}&8.922&   NA&8.914&   NA
+&\bf{-3.603}&\bf{  NA}&-3.924&  NA&-3.929&  NA\\
+ \hline \end{tabular} \end{table} 
+
+
+\begin{table} 
+%\begin{minipage}[!t]{0.6\linewidth}
+\small
+\centering 
+\begin{tabular}{lrrr}\hline \bf{Dataset}& $N$ & $d$ & MB reduced\\ \hline 
+Kin8nm & 8,192 & 8 & 58.46MB \\ 
+Naval & 11,934 & 16 & 147.84MB\\ 
+Power Plant & 9,568 & 4 & 37.98MB\\ 
+Protein & 45,730 & 9 & \bf{694.02MB}\\ 
+Wine & 1,599 & 11 & 14.30MB\\ 
+Year & 515,340 & 90 & \bf{65107.34MB}\\ \hline 
+\end{tabular} 
+\caption{ Memory reduction of SEP from full EP. } \label{tab:memory} 
+%\end{minipage}
+\end{table} 
+%
+%\begin{minipage}[!t]{0.35\linewidth}
+%\begin{figure}
+
+%\centering
+%\def\svgwidth{0.9\linewidth}
+%\subfigure[\label{fig:sonar}]{
+%\input{fig/sonar.pdf_tex}}
+%\caption{Averaged test likelihood for long-time training.}
+
+%\end{figure}
+%\end{minipage}

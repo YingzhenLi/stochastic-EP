@@ -1,38 +1,50 @@
 
 \section{Computational opportunities}
 
+\subsection{Models with latent random variables}
+Latent variable models are much more powerful than fully observed probabilistic models as they provide flexibility on specifying data distributions via hidden variables. Mathematically, now the model distribution $p(\bm{x}_i, \bm{h}_i | \bm{\theta})$ contains hidden variables $\bm{h}_i$, typically associated with each observation, and often we also assign a prior term $p_0(\bm{h}_i)$ to each of them. The true posterior $p(\bm{\theta}, \{ \bm{h}_n\} | D) \propto p_0(\bm{\theta}) \prod_n p_0(\bm{h}_n) p(\bm{x}_n | \bm{h}_n, \bm{\theta})$ is further complicated and we again consider approximate methods. SEP can be applied accordingly on the global parameter $\bm{\theta}$, however a better strategy to handle the latent variables is to maintain separate factors for them:
+\begin{equation}
+q(\bm{\theta}, \{ \bm{h}_n\}) \buildrel\triangle\over = p_0(\bm{\theta}) f(\bm{\theta})^N \prod_n p_0(\bm{h}_n) f(\bm{h}_n) \approx p(\bm{\theta}, \{ \bm{h}_n\} | D).
+\end{equation}
+Fortunately in implementation memory allocation for the local factors $f(\bm{h}_n)$ is unnecessary as well, since these local approximations only capture the contribution of the corresponding datapoint and are independent with each other. More formally we write the cavity distribution and tilted distribution computed in this scenario and assume we select $\bm{x}_i$ as the current datapoint:
+\begin{align}
+q_{-1}(\bm{\theta}, \bm{h}_i) &\propto  p_0(\bm{\theta}) f(\bm{\theta})^{N-1} p_0(\bm{h}_i), \\
+\tilde{p}_i(\bm{\theta}, \bm{h}_i) &\propto p_0(\bm{\theta}) f(\bm{\theta})^{N-1} p_0(\bm{h}_i) p(\bm{x}_i, \bm{h}_i | \bm{\theta}).
+\end{align}
+So the local factor $f(\bm{h}_i)$ is always removed from the global approximation and has no effect on the tilted distribution. This even implies that we do not need to compute the higher moments of $\bm{h}_i$ except its contribution to $q(\bm{\theta})$. Those sufficient statistics are only required when performing EP inference, which is by considering the test data as the next incoming datapoint and proposing the same approximation structure. It is also possible to have the latent variables globally shared or shared in a local cluster, and the posterior approximations for them contain more than one copy of the factors. But now we can extend SEP to these latent variables accordingly, which still provides computation gains in space complexity.
+
 \subsection{Distributed Bayesian learning via data partitioning}
-Recently distributed Bayesian computation methods have attracted significant amount of attentions \cite{broderick:stream}\cite{gelman:dep}\cite{xu:sms}, thanks to the advances of computation power and developments of parallel algorithms. The latter two papers proposed a distributed expectation propagation (DEP) framework, which first partitions the dataset into $K$ disjoint pieces $\{ D_k = \{\bm{x}_i\}_{i=1}^{N_k} \}$ with $N = \sum_{i=1}^K N_k$, then assigns factors to each sub-datasets. The projection step is computed by sampling methods, making DEP stochastic in the sense of moment approximation. SEP/AEP can be incorporated into this framework as well, where we present the two different opportunities as follows and provide a cartoon view in Figure \ref{fig:dep_sep_dsep}.
+Recently distributed Bayesian computation methods have attracted significant amount of attentions \cite{broderick:stream}\cite{gelman:dep}\cite{xu:sms}, thanks to the advances of computation power and developments of parallel algorithms. The latter two papers proposed a distributed expectation propagation (DEP) framework, which first partitions the dataset into $K$ disjoint pieces $\{ D_k = \{\bm{x}_i\}_{i=1}^{N_k} \}$ with $N = \sum_{k=1}^K N_k$, then assigns factors to each sub-datasets. The projection step is computed by sampling methods, making DEP stochastic in the sense of moment approximation. SEP/AEP can be incorporated into this framework as well, where we present the two different opportunities as follows and provide a cartoon view in Figure \ref{fig:dep_sep_dsep}.
 
-\textbf{SEP/AEP outside minibatches.} We tie all the factors on minibatches and run SEP/AEP accordingly. The fraction we exclude/include changes to $1/K$, and the moment computation is by advance sampling methods. Notice that the procedure is doubly stochastic when running SEP on this. Also AEP can be very accurate but with the price of much slower computation as it waits for sampling procedure on each minibatch to finish.
+\textbf{SEP/AEP outside minibatches.} We tie all the factors on minibatches and run SEP/AEP accordingly. The fraction we exclude/include changes to $1/K$, and the moment computation is by advance sampling methods. Notice that the procedure is doubly stochastic when running SEP on this. Also AEP can be much slower as it waits for sampling procedure on each minibatch to finish.
 
-\textbf{SEP/AEP inside minibatches.} Distributed EP might be preferred in practice if storing local factors is affordable. However compared to sampling approaches that is generally time consuming, running SEP/AEP inside each minibatch can achieve significant speed-up if there exists a closed-form solution. Now the scaling fraction of the algorithm turns out to be $1/N_k$ when updating the $k^{th}$ site, and the cavity computation changes to $q(\bm{\theta})_{-k} \propto q(\bm{\theta}) / f_k(\bm{\theta})^{1 / N_k}$. We refer this type of SEP/AEP as DSEP/DAEP in the rest of the paper.
+\textbf{SEP/AEP inside minibatches.} Distributed EP might be preferred in practice if storing local factors is affordable. However compared to sampling approaches that is generally time consuming, SEP/AEP inside minibatches can achieve significant speed-up. Now the scaling fraction of the algorithm turns out to be $1/N_k$ when updating the $k^{th}$ site, and the cavity computation changes to $q(\bm{\theta})_{-k} \propto q(\bm{\theta}) / f_k(\bm{\theta})^{1 / N_k}$. We refer this type of SEP/AEP as DSEP/DAEP in the rest of the paper.
 
 %%%%%%
-\subsection{Complexity comparisons}
-We examine the computational gains of SEP/AEP in detail and compare them with other EP-like algorithms in literature. Candidate methods include normal EP, stochastic EP, average EP, distributed EP, and the potentially flawed assumed density filtering for multiple passes. Note that AEP and DEP are trivial to go parallel, where for simplicity we neglect the transmission expense. We also assume Gaussian approximations for the posterior and an equal partitioning of the dataset.
+%\subsection{Complexity comparisons}
+%We examine the computational gains of SEP/AEP in detail and compare them with other EP-like algorithms in literature. Candidate methods include normal EP, stochastic EP, average EP, distributed EP, and the potentially flawed assumed density filtering for multiple passes. Note that AEP and DEP are trivial to go parallel, where for simplicity we neglect the transmission expense. We also assume Gaussian approximations for the posterior and an equal partitioning of the dataset.
 
 %%%
-We start from the optional data partitioning step with instant cost. Next we initialise the global (and local) factors, requiring $\mathcal{O}(Kd^2)$ memory spaces for normal EP and DEP, and $\mathcal{O}(d^2)$ for the others. All EP algorithms except ADF proceed to compute the cavity distribution in $\mathcal{O}(d^3)$ time for each local factors. The tilted distributions are then conceptually formed for analytical/stochastic moment computation with cost defined as $\mathcal{O}(h(n, d))$ each, where $n$ is the number of datapoints involved in the local posterior. Such complexity includes $\mathcal{O}(d^3)$ for matrix inversion and/or $ >> \mathcal{O}(d^2)$ for sampling methods. The complexity of inclusion is $\mathcal{O}(d^2)$ for a single update, but the total number of updates in one full pass varies for different algorithms. AEP and DEP incorporate the local factors only after the full pass, while the others modify the global approximation after processing each site. However when parallel, it might be sensible to include updates according to a schedule if parameter transmission cost is large.
+%We start from the optional data partitioning step with instant cost. Next we initialise the global (and local) factors, requiring $\mathcal{O}(Kd^2)$ memory spaces for normal EP and DEP, and $\mathcal{O}(d^2)$ for the others. All EP algorithms except ADF proceed to compute the cavity distribution in $\mathcal{O}(d^3)$ time for each local factors. The tilted distributions are then conceptually formed for analytical/stochastic moment computation with cost defined as $\mathcal{O}(h(n, d))$ each, where $n$ is the number of datapoints involved in the local posterior. Such complexity includes $\mathcal{O}(d^3)$ for matrix inversion and/or $ >> \mathcal{O}(d^2)$ for sampling methods. The complexity of inclusion is $\mathcal{O}(d^2)$ for a single update, but the total number of updates in one full pass varies for different algorithms. AEP and DEP incorporate the local factors only after the full pass, while the others modify the global approximation after processing each site. However when parallel, it might be sensible to include updates according to a schedule if parameter transmission cost is large.
 
 %%%
-We list the space and time complexity factors of several algorithms in Table \ref{table:complexity}. The figures apply to fully observed models, while none of them have advantage on the others on local hidden variable posterior approximations. Like the comparison between batch and stochastic learning methods, AEP produces more robust updates, and can be significantly faster than SEP when parallel. However AEP requires more passes of datasets than SEP, which might be a problem when with limited computation time. On the other hand, SEP might be too noisy, so SEP with minibatch averaging is preferred in general.
+%We list the space and time complexity factors of several algorithms in Table \ref{table:complexity}. The figures apply to fully observed models, while none of them have advantage on the others on local hidden variable posterior approximations. Like the comparison between batch and stochastic learning methods, AEP produces more robust updates, and can be significantly faster than SEP when parallel. However AEP requires more passes of datasets than SEP, which might be a problem when with limited computation time. On the other hand, SEP might be too noisy, so SEP with minibatch averaging is preferred in general.
 
-\begin{table}[t]
-\caption{Complexity figures for the EP algorithms discussed. The time complexities are counted on a full pass of dataset, and the global approximations are updated after each moment computation. }
-\label{table:complexity}
-\begin{center}
-\begin{tabular}{lll}
-\multicolumn{1}{c}{\bf Type}  &\multicolumn{1}{c}{\bf Time complexity} &\multicolumn{1}{c}{\bf Space complexity}
-\\ \hline 
-Normal EP         		&$\mathcal{O}(K(d^3 + h(N/K, d) + d^2))$ 		&$\mathcal{O}(Kd^2)$ \\
-Distributed EP        	&$\mathcal{O}(d^3 + h(N/K, d) + d^2)$			&$\mathcal{O}(Kd^2)$ \\
-Averaged EP (sequel)     &$\mathcal{O}(d^3 + K h(N/K, d) + d^2)$ 		&$\mathcal{O}(d^2)$ \\
-Averaged EP (parallel)   &$\mathcal{O}(d^3 + h(N/K, d) + d^2)$ 		&$\mathcal{O}(Kd^2)$ \\
-Stochastic EP 			&$\mathcal{O}(K(d^3 + h(N/K, d) + d^2))$ 		&$\mathcal{O}(d^2)$ \\
-ADF (multi.~pass) 		&$\mathcal{O}(K(h(N/K, d) + d^2))$ 		&$\mathcal{O}(d^2)$ \\
-\hline
-Sampling 				&$\mathcal{O}(h(N, d))$			&$\mathcal{O}(d^2)$
-\end{tabular}
-\end{center}
-\end{table}
+%\begin{table}[t]
+%\caption{Complexity figures for the EP algorithms discussed. The time complexities are counted on a full pass of dataset, and the global approximations are updated after each moment computation. }
+%\label{table:complexity}
+%\begin{center}
+%\begin{tabular}{lll}
+%\multicolumn{1}{c}{\bf Type}  &\multicolumn{1}{c}{\bf Time complexity} &\multicolumn{1}{c}{\bf Space complexity}
+%\\ \hline 
+%Normal EP         		&$\mathcal{O}(K(d^3 + h(N/K, d) + d^2))$ 		&$\mathcal{O}(Kd^2)$ \\
+%Distributed EP        	&$\mathcal{O}(d^3 + h(N/K, d) + d^2)$			&$\mathcal{O}(Kd^2)$ \\
+%Averaged EP (sequel)     &$\mathcal{O}(d^3 + K h(N/K, d) + d^2)$ 		&$\mathcal{O}(d^2)$ \\
+%Averaged EP (parallel)   &$\mathcal{O}(d^3 + h(N/K, d) + d^2)$ 		&$\mathcal{O}(Kd^2)$ \\
+%Stochastic EP 			&$\mathcal{O}(K(d^3 + h(N/K, d) + d^2))$ 		&$\mathcal{O}(d^2)$ \\
+%ADF (multi.~pass) 		&$\mathcal{O}(K(h(N/K, d) + d^2))$ 		&$\mathcal{O}(d^2)$ \\
+%\hline
+%Sampling 				&$\mathcal{O}(h(N, d))$			&$\mathcal{O}(d^2)$
+%\end{tabular}
+%\end{center}
+%\end{table}

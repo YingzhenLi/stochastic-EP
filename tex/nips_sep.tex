@@ -10,6 +10,9 @@
 \usepackage{graphicx}
 \usepackage[backgroundcolor=white,linecolor=red,bordercolor=white,textsize=tiny,textwidth=10mm]{todonotes}
 
+\newcommand{\ica}{\hspace{0.25cm}}
+\renewcommand{\arraystretch}{0.94}
+
 %\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
 
 
@@ -54,17 +57,17 @@ Address \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-TO BE DONE
+Global approximation methods including variational inference scale well to very large datasets using stochastic optimisation. However in several cases local approximation approaches such as expectation propagation (EP) are often considered as a better alternative. Unfortunately they suffer from their huge amount of memory requirement that is proportional to the dataset size $N$, resulting in less applications to big data settings. We present a novel approximation algorithm called stochastic expectation propagation (SEP), which updates in a local approximation fashion but only maintains a global approximation. We demonstrate its connection to stochastic variational inference via a generic double-loop framework. Tests on synthetic and real-world data indicate that SEP benefits from the speed-up of stochastic optimisation and performs almost as well as full EP, but reduces the memory consumption by a factor of $N$. 
 \end{abstract}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% INTRODUCTION
-\input{intro}
+%\input{intro}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% SECTION 2: EP, ADF & SEP %%%%%%%%%%%%
-\input{section2}
+%\input{section2}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%% SECTION 3: THEORECTICAL UNDERSTANDINGS %
