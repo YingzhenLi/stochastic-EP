@@ -36,7 +36,7 @@
   }%
   \providecommand\rotatebox[2]{#2}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{242.329372bp}%
+    \setlength{\unitlength}{248.88416316bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -48,7 +48,7 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,1.06143243)%
+  \begin{picture}(1,1.03251348)%
     \put(0,0){\includegraphics[width=\unitlength]{fig/sep_logit.pdf}}%
   \end{picture}%
 \endgroup%

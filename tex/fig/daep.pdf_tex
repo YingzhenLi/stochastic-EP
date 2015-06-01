@@ -48,7 +48,7 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,1.0300415)%
+  \begin{picture}(1,0.99745383)%
     \put(0,0){\includegraphics[width=\unitlength]{fig/daep.pdf}}%
   \end{picture}%
 \endgroup%
