@@ -49,104 +49,104 @@ Address \\
 
 \maketitle
 
-\section*{Notations}
-This supplementary material provides further explanations and proofs of the results in the main paper. For convenience we conduct all the analyses on exponential families, and the results can be extended to general situations accordingly. We assume that both the approximation $q(\bm{\theta})$ and the model $p(\bm{x} | \bm{\theta})$ are from minimal exponential families
+\appendix
+
+\section{Further Theoretical Results}
+
+
+\subsection{Equivalence between the ``Variational'' AEP and VI/VB}
+We briefly discussed the equivalence between ``variational'' AEP and VI/VB.  
+%
+Without loss of generality we provide a proof on exponential families. We further assume that the prior $p_0(\bm{\theta})$ and the approximate posterior $q(\bm{\theta})$ are in the same family, but in general we might use different structures for approximate posterior and our proof still applies. 
+
+We first define the exponential families for both likelihood terms and the approximate posterior,
 \begin{align}
 \mathcal{P} &= \{p(\bm{x} | \bm{\theta}) = \exp \left( \langle \beta(\bm{\theta}), \psi(\bm{x}) \rangle - A(\bm{\theta}) \right) |\ \bm{\theta} \in \bm{\Theta} \ s.t.~ A(\bm{\theta}) < \infty \}, \\
 \mathcal{Q} &= \{q(\bm{\theta}) = \exp \left( \langle \bm{\lambda}_q, \phi(\bm{x}) \rangle - A(\bm{\lambda}_q) \right) |\ \bm{\lambda}_q \in \bm{\Lambda} \ s.t.~ A(\bm{\lambda}_q) < \infty \},
 \end{align}
-respectively, where $A(\cdot)$ represents the log partition function to guarantee a valid distribution. We also assume the observations $D = \{\bm{x}_i\}_{i=1}^N$ are i.i.d~samples from some underlying distribution. Models containing (local) hidden variables can be represented accordingly and the results apply as well. We also assume that the prior $p_0$ and the approximating factors $f$, $f_i$ belong to $\mathcal{Q}$ with natural parameter $\bm{\lambda}_0$, $\bm{\lambda}$ and $\bm{\lambda}_i$. Further, we write the true posterior as in exponential family
+where $A(\cdot)$ represents the log partition function to guarantee a valid distribution. We denote the natural parameters of the prior $p_0(\bm{\theta})$, the approximating factor $f(\bm{\theta})$, and the intermediate answers $f_n(\bm{\theta})$ as $\bm{\lambda}_0$, $\bm{\lambda}$ and $\bm{\lambda}_n$, respectively. We next write the exponential family containing the true posterior and the tilted distribution:
 \begin{equation}
 \mathcal{\tilde{P}} = \{p(\bm{\theta}) = \exp \left( \langle \bm{\eta}, \Phi(\bm{\theta}) \rangle - A(\bm{\eta}) \right) |\ \bm{\eta} \in \bm{H} \ s.t.~ A(\bm{\eta}) < \infty \}, \\
 \end{equation}
-and the sufficient statistics $\Phi(\bm{\theta}) = [\phi(\bm{\theta}), \beta(\bm{\theta}), A(\bm{\theta})]$ by assuming $\phi$, $\beta$ and $A$ are linearly independent wrt.~operation $E_{\tilde{p}}[\cdot], \forall \tilde{p} \in \tilde{\mathcal{P}}$ w.l.o.g. It is straight-forward that the true posterior has natural parameter $\bm{\eta}_p = [\bm{\lambda}_0, \sum_{i} \psi(\bm{x}_i), -N]$, and the tilted distributions $\tilde{p}_i$ are also in this family with $\bm{\eta}_i = [\bm{\lambda}_{-i}, \psi(\bm{x}_i), -1]$ for normal EP or $\bm{\eta}_i = [\bm{\lambda}_{-1}, \psi(\bm{x}_i), -1]$ for stochastic EP. The approximation family $\mathcal{Q}$ is a subset of $\tilde{\mathcal{P}}$ as well and we write $\bm{\eta}_q = [\bm{\lambda}_q, \bm{0}, 0]$. In the rest of the paper we also write $\bm{\lambda}_q \leftarrow \mathtt{proj}[\bm{\eta}]$ to denote the M-projection of distributions from distributions in $\mathcal{\tilde{P}}$ to $\mathcal{Q}$.
-
-\section*{Proofs for the main results}
-\subsection*{Equivalence between ``variational'' AEP and VB}
-We briefly discussed the equivalence between ``variational'' AEP and VB and we provide a formal proof here. To help the proof we recall the AEP approximation structure with power EP style no-damped update. 
+with sufficient statistics $\Phi(\bm{\theta}) = [\phi(\bm{\theta}), \beta(\bm{\theta}), A(\bm{\theta})]$ \footnote{We assume $\phi$, $\beta$ and $A$ are linearly independent wrt.~operation $E_{\tilde{p}}[\cdot], \forall \tilde{p} \in \tilde{\mathcal{P}}$ w.l.o.g.}. It is straight-forward that the true posterior has natural parameter $\bm{\eta}_p = [\bm{\lambda}_0, \sum_{n} \psi(\bm{x}_n), -N]$, and the tilted distributions $\tilde{p}_n(\bm{\theta})$ has $\bm{\eta}_n = [\bm{\lambda}_{-1}, \psi(\bm{x}_n), -1]$. We also write $\bm{\lambda}_q \leftarrow \mathtt{proj}[\bm{\eta}]$ to denote the moment projection of distributions in $\mathcal{\tilde{P}}$ to $\mathcal{Q}$.
+%
+We recall the AEP algorithm with current notations, using no-damped update,
 %
 \begin{align}
-\bm{\lambda}_q &\buildrel\triangle\over = \bm{\lambda}_0 + \sum_{i=1}^N \bm{\lambda}_i, \\
-\bm{\lambda}_i &\buildrel\triangle\over = \mathtt{proj}[\bm{\eta}_i] - \bm{\lambda}_{-1}, \\
-\bm{\lambda}_{-1} &\buildrel\triangle\over = \bm{\lambda}_0 + \frac{N-1}{N} \sum_{i=1}^N \bm{\lambda}_i.
+\bm{\lambda}_{-1} & = \bm{\lambda}_0 + \frac{N-1}{N} \sum_{n=1}^N \bm{\lambda}_n, \\
+\bm{\lambda}_n &\leftarrow \mathtt{\alpha \mhyphen proj}[\bm{\eta}_n] - \bm{\lambda}_{-1}, \\
+\bm{\lambda}_q &\leftarrow \bm{\lambda}_0 + \sum_{n=1}^N \bm{\lambda}_n.
 \end{align}
 %
-Note that we can also apply direct global optimisation (i.e.~VB) to obtain $\bm{\lambda}_q$. Now we state the following theorem. 
+The projection step is generalised to alpha-projection \cite{amari:alpha_proj}, which returns the minimiser of the alpha divergence $D_{\alpha}(\tilde{p}_n(\bm{\theta}) || q(\bm{\theta}))$ wrt.~$q(\bm{\theta})$ in $\mathcal{Q}$. Examples include the previous defined moment projection $\mathtt{proj}$ which take $\alpha = 1$, and information projection which choose $\alpha = -1$. 
+%
+Now we state the following theorem. 
 %
 \begin{theorem}
-The ``variational'' averaged expectation propagation algorithm, when converged to a fixed point, returns a local optimum of variational Bayes.
+The ``variational'' averaged expectation propagation algorithm, when converged to a fixed point, returns a local optimum of variational inference.
 \end{theorem}
 \begin{proof}
-Consider the same factorisation structure in (4) for both VB and the ``variational'' AEP. VB optimise the following KL divergence wrt.~$q(\bm{\theta})$:
+Consider the same factorisation structure, $\bm{\lambda}_q = \bm{\lambda}_0 + N \bm{\lambda}$, for both VI and the ``variational'' AEP. VI directly optimises the global KL divergence wrt.~$q(\bm{\theta})$:
 \begin{equation}
-KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \langle \bm{\lambda}_q, E_q \phi(\bm{\theta}) \rangle - A(\bm{\lambda}_q) - \langle \bm{\eta}_p, \Phi(\bm{\theta}) \rangle + A(\bm{\eta}_p),
+KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \langle \bm{\lambda}_q, E_q \phi(\bm{\theta}) \rangle - A(\bm{\lambda}_q) - \langle \bm{\eta}_p, E_q \Phi(\bm{\theta}) \rangle + A(\bm{\eta}_p).
 \end{equation}
-where we have $\bm{\eta}_p = (\bm{\lambda}_0, \sum_{i} \psi(\bm{x}_i), -N)$. Using the fact that $\mathcal{Q} \subset \tilde{\mathcal{P}}$ and $\bm{\eta}_q = [\bm{\lambda}_q, \bm{0}, 0]$,
+Using $\bm{\eta}_p = [\bm{\lambda}_0, \sum_{n} \psi(\bm{x}_n), -N]$,
 \begin{equation}
-\nabla_{\bm{\lambda}_q}^{VB} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \langle \bm{\lambda}_q - \bm{\lambda}_0, E_q \phi(\bm{\theta}) \rangle - \langle \sum_{i} \psi(\bm{x}_i), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle + N \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
+\nabla_{\bm{\lambda}_q}^{VB} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \langle \bm{\lambda}_q - \bm{\lambda}_0, \nabla_{\bm{\lambda}_q} E_q \phi(\bm{\theta}) \rangle - \langle \sum_{n} \psi(\bm{x}_n), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle + N \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
 \end{equation}
 On the other hand, the inner loop of the ``variational'' AEP finds the optimiser of the following divergence
 \begin{equation}
-KL(q(\bm{\theta}) || \tilde{p}_i(\bm{\theta})) = \langle \bm{\lambda}_q, E_q \phi(\bm{\theta}) \rangle - A(\bm{\lambda}_q) - \langle \bm{\eta}_i, \Phi(\bm{\theta}) \rangle + A(\bm{\eta}_i).
+KL(q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})) = \langle \bm{\lambda}_q, E_q \phi(\bm{\theta}) \rangle - A(\bm{\lambda}_q) - \langle \bm{\eta}_n, E_q \Phi(\bm{\theta}) \rangle + A(\bm{\eta}_n).
 \end{equation}
-Now the local update we are interested in is $\bm{\lambda}_i = \bm{\lambda}_q - \bm{\lambda}_{-1}$, and we treat the cavity parameter $\bm{\lambda}_{-1}$ as a constant in this optimisation. Similarly we obtain the graident wrt.~$\bm{\lambda}_i$
+Now the local update we are interested in is $\bm{\lambda}_n = \bm{\lambda}_q - \bm{\lambda}_{-1}$, and we treat the cavity parameter $\bm{\lambda}_{-1}$ as a constant in this optimisation. Similarly we obtain the graident wrt.~$\bm{\lambda}_n$
 \begin{equation}
-\nabla_{\bm{\lambda}_i}^{AEP} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \langle \bm{\lambda}_q - \bm{\lambda}_{-1}, E_q \phi(\bm{\theta}) \rangle - \langle \psi(\bm{x}_i), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle +  \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
+\nabla_{\bm{\lambda}_n}^{AEP} KL(q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})) = \langle \bm{\lambda}_q - \bm{\lambda}_{-1}, \nabla_{\bm{\lambda}_q} E_q \phi(\bm{\theta}) \rangle - \langle \psi(\bm{x}_n), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle +  \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
 \end{equation}
-If consider the ``variational'' AEP as a gradient descent method, the gradient of the global parameters is constructed by summing the gradients of the local parameters. Readers can verify that the gradient of the global parameter is equivalent to the gradient of VB objective, i.e.
+If we view the ``variational'' AEP as a gradient descent method, from $\bm{\lambda}_q \leftarrow \bm{\lambda}_0 + \sum_{n=1}^N \bm{\lambda}_n$ we have the gradient of the global parameter constructed by summing the gradients of the local parameters. Readers can verify that the gradient of the global parameter is equivalent to the gradient of VI objective, i.e.
 \begin{equation}
-\nabla_{\bm{\lambda}_q}^{VB} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \sum_i \nabla_{\bm{\lambda}_i}^{AEP} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \nabla_{\bm{\lambda}_q}^{AEP} KL(q(\bm{\theta}) || p(\bm{\theta} | D)).
+\nabla_{\bm{\lambda}_q}^{VB} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \sum_n \nabla_{\bm{\lambda}_n}^{AEP} KL(q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})).
 \end{equation}
-This implies that the fixed points of ``variational'' AEP are also stationary points of VB.
+This implies that the fixed points of ``variational'' AEP are also stationary points of VI.
 \end{proof}
 
+%
+\subsection{SEP in a Global Optimisation Flavour}
+We relate SEP to a global approximation algorithm though it is computed in a truely local way. This framework utilises alpha divergence but on the global posterior, and we motivate it by describing VI and SVI as divergence minimisation.
+%
+VI performs global optimisation on $KL(q(\bm{\theta})||p(\bm{\theta}|\mathcal{D}))$, and its stochastic version, SVI, is driven by the gradients of $KL(q(\bm{\theta}) || p(\bm{\theta} | \{\bm{x}_n\}^N))$ on the $N$ replicates $\{\bm{x}_n\}^N$. Similarly, we state SEP as a stochastic global optimisation procedure, which minimises the $\alpha$-divergence $D_{\alpha}(p(\bm{\theta} | \{\bm{x}_n\}^N) || q_n(\bm{\theta}))$ with $\alpha = \mhyphen 1 + 2/N$. Indeed we can understand the inner-loop of AEP as PEP \cite{minka:powerep}, if considering the likelihood term of $\bm{x}_n$ raised to power $N$ as the only factor.
 
-\subsection*{Proofs for the large-data limit results}
+However directly minimising the alpha-divergence between the true posterior $p(\bm{\theta}|\mathcal{D})$ and the global approximation $q(\bm{\theta})$ recovers PEP on the whole dataset instead, and the factor to include in the tilted distribution changes to the intractable $\mathtt{avg}[\{p(\bm{x}_n | \bm{\theta}) \}]$. Readers might have noticed that the update of PEP on full dataset is given by $q(\bm{\theta}) \leftarrow \mathtt{proj}[\mathtt{avg}[\{ \tilde{p}_n(\bm{\theta}) \}]]$. In other words, we can interpret AEP as an approximation to the impractical batch PEP by interchanging computations, and we illustrate a geometric view for this in Figure \ref{fig:aep_vs_pep}.
+
+It is important to note that SEP/AEP in convergence does not minimise the alpha divergence globally. Like PEP, the inner-loop compute alpha projections of $p(\bm{\theta} | \{\bm{x}_n\}^N)$, where one can show that it is equivalent to compute $\mathtt{proj}[\tilde{p}_n(\bm{\theta})]$ using techniques provided in \cite{minka:powerep}. The paper further proved that the stationary points of the projections of power EP on the whole dataset are equivalent to the fixed points of alpha divergence. However the outer-loop averages the natural parameters of the intermediate answers, which breaks the optimisation in the inner-loop. Indeed we provide the fixed points conditions of AEP which shows its local approximation nature.
+%
 \begin{theorem}
-When the number of observations goes to infinity, stochastic expectation propagation minimises the same objective as stochastic variational inference in each iteration.
+The fixed points of averaged EP, if exist, can be written as $q(\bm{\theta}) = \mathtt{avg}[\{q_n(\bm{\theta})\}]$, where
+\begin{equation}
+q_n(\bm{\theta}) = \mathtt{proj}[\tilde{p}_n(\bm{\theta})].
+\label{eq:mm}
+\end{equation}
+These fixed points are also the fixed points of stochastic EP in expectation. 
 \end{theorem}
 \begin{proof}
-We assumed minimal exponential families in the notations, so there exists a bijection between natural parameters $\bm{\lambda}_q$ and mean parameters $\bm{m}_q \buildrel\triangle\over = E_q \phi(\bm{\theta})$. We denote $\bm{m}_{\alpha}[p]$ as the mean parameter of the $\alpha$-projection of some distribution $p$ onto the approximation family $\mathcal{Q}$. Section 7 of \cite{amari:alpha_proj} showed that the path $f(\alpha) = q(\bm{\theta}; \bm{m}_{\alpha}[p])$, $\alpha \in [-1, 1]$ in $\mathcal{Q}$ is a continuous path connecting the answers of $\mhyphen 1, 1$-projections. Recall the SEP inner-loop that the local projection $\mathtt{proj}[\tilde{p}_i(\bm{\theta})]$ is equivalent to the $\alpha$-projection of $p(\bm{\theta}) \buildrel\triangle\over = p(\bm{\theta} | \{ \bm{x}_i\}^N)$ with $\alpha = \mhyphen 1 + 2/N$. Applying the large-data limit returns
-\begin{equation}
-\lim_{N \rightarrow \infty} \mathtt{proj}[\tilde{p}_i(\bm{\theta})] = \arg\min_{q} KL(q(\bm{\theta}) || p(\bm{\theta} | \{ \bm{x}_i\}^N)), \forall i.
-\end{equation}
+In each update SEP gives the same answers as AEP in expectation if initialised at the same starting point. Also as an analogy to normal EP, the stationary points of AEP ask for moment matching between tilted and intermediate distributions. 
 \end{proof}
-
-\textbf{Remark.}
-The $\mhyphen 1$-projection is non-unique in many cases, so there is no guarantee that SEP and SVI obtain the same minimiser of the variational KL even when with the same initialisations. Also AEP as the expectation of SEP might not converge to a VB answer since the projection results might be unbounded. In math,
-\begin{equation}
-\lim_{N \rightarrow \infty} \frac{1}{N} \sum_{i=1}^N \mathtt{proj}[\bm{\eta}_i] \neq \lim_{N \rightarrow \infty} \frac{1}{N} \sum_{i=1}^N \lim_{N \rightarrow \infty} \mathtt{proj}[\bm{\eta}_i].
-\end{equation}
-See Fatou's lemma for more detailed proof.
-
-
-\subsection{SEP as a stochastic version of PEP with global factors}
-VB performs global optimisation on $KL(q(\bm{\theta})||p(\bm{\theta}|D))$, and its stochastic version, SVI, is driven by the gradients of $KL(q(\bm{\theta}) || p(\bm{\theta} | \{\bm{x}_i\}^N))$ on the $N$ replicates $\{\bm{x}_i\}^N$. Similarly, SEP can also be presented as a stochastic global optimisation procedure, which minimises the $\alpha$-divergence \footnote{$D_{1}(p||q) \buildrel\triangle\over = KL(p || q) = \lim_{\alpha \rightarrow 1} D_{\alpha}(p||q)$, and $D_{ \mhyphen 1}(p||q) \buildrel\triangle\over = KL(q || p) = \lim_{\alpha \rightarrow \mhyphen 1} D_{\alpha}(p || q)$. } \cite{amari:ig1985}
-\begin{equation}
-D_{\alpha}(p(\bm{\theta} | \{\bm{x}_i\}^N) || q_i(\bm{\theta})) = \frac{4}{1 - \alpha^2} 
-		\left( 1 - \int_{\bm{\theta}} p(\bm{\theta} | \{\bm{x}_i\}^N)^{\frac{1+\alpha}{2}} q_i(\bm{\theta})^{\frac{1-\alpha}{2}} d\bm{\theta} \right)
-\end{equation} 
-with $\alpha = \mhyphen 1 + 2/N$. This comes from the connection of SEP to power EP (PEP) \cite{minka:powerep}, if considering the likelihood term of $\bm{x}_i$ raised to power $N$ as the only factor. Like PEP, SEP still perform local computation, where the fixed points of PEP projection operator are also the stationary points of the $\alpha$-divergence. Unlike PEP but like SVI, SEP never attains a local optimum of $D_{\alpha}(p(\bm{\theta} | \{\bm{x}_i\}^N) || q_i(\bm{\theta}))$, as the outer-loop averaging compromises the inner-loop optimisation.
-
 %
-However applying this $\alpha$-divergence minimisation framework to the true posterior $p(\bm{\theta}|D)$ recovers PEP on the whole dataset instead, which considers the product of all likelihood terms as a single factor. Readers might have noticed that the update of PEP on full dataset is given by $q(\bm{\theta}) \leftarrow \mathtt{proj}[\mathtt{avg}[\{ \tilde{p}_i(\bm{\theta}) \}]]$. In other words, we can interpret AEP as an approximation to the impractical batch PEP by interchanging computations. Figure \ref{fig:aep_vs_pep} illustrate a geometric view of this approximation, where the bias of this swap is typically non-zero when $\mathcal{Q} \neq \tilde{\mathcal{P}}$.
+SVI differs from SEP that in convergence it returns a local optimum of the global KL divergence $KL(q(\bm{\theta})|p(\mathcal{D}|\bm{\theta}))$. This is because, the variational KL divergence, or alpha divergence with $\alpha = -1$, is the only special case that has the same fixed points for local and global optimisation. 
 
-%
 \begin{figure}
 \centering
-\def\svgwidth{0.3\linewidth}
+\def\svgwidth{0.35\linewidth}
 \subfigure[\label{fig:aep_vs_pep}]{
 \input{fig/aep_vs_pep.pdf_tex}}
 %
-\hspace{0.5in}
-%
-\def\svgwidth{0.35\linewidth}
-\subfigure[\label{fig:dep_sep_dsep}]{
-\input{fig/dep_sep_dsep.pdf_tex}}
-
-\caption{(a) A geometric view of AEP/PEP comparison. (b) A cartoon illustration of DEP, SEP and DSEP. For each algorithm we show $q(\bm{\theta})$ on the top and $\tilde{p}_i(\bm{\theta})$ at the bottom. \todo{Needs longer and clearer explanation.}}
-
+\caption{(a) A geometric view of AEP/PEP comparison}
 \end{figure}
+
+\section{Mathematical Details for EP updates}
+\subsection{Mixture of Gaussians}
+
+\subsection{Probit Regression}
+
 \subsubsection*{References}
 \renewcommand{\section}[2]{}
 \bibliographystyle{apalike}
