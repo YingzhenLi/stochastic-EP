@@ -1,5 +1,23 @@
 \subsection{Probabilistic back-propagation}
 
+Probabilistic-backpropagation (PBP) \cite{hernandez2015probabilistic} is a
+recent state-of-the-art method for scalable approximate inference in neural
+network models. PBP works by doing several iterations of ADF over the training
+data.  The moment-matching operations required by ADF are computed by
+first propagating the uncertainty on the synaptic weights forward through the network
+and then computing the gradient of the marginal likelihood by backpropagation.
+PBP is based on ADF to reduce the large memory cost that would be required by EP
+when the amount of available data is very large.
+
+We performed several experiments to asses the accuracy of different implementations of PBP
+based on ADF, SEP and EP. We considered neural networks with 100 hidden units and followed the same experimental protocol 
+as the one described by \cite{hernandez2015probabilistic}.
+Table 2 shows the average test RMSE and test log-likelihood for each method.
+Interestingly, SEP and ADF often outperform EP in this case.
+Finally, Table 3 shows the reduction in memory consumption when SEP is compared with EP.
+This reduction scales as a function of the dataset size and for the biggest
+one, Year, it is of several tens of gigabytes.
+ 
 \begin{table} 
 \small
 \centering \caption{ Average test results all methods. } \label{tab:results} \begin{tabular}{l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}}\hline 
