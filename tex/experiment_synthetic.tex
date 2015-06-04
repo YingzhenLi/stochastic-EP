@@ -71,7 +71,7 @@ Sonar&\bf{0.198}&\bf{0.0208}&0.198&0.0217&0.198&0.0243
  
  %
 %%%% FIRST EXAMPLE %%%%
-\subsection{Mixture of Gaussians for clustering}
+\subsection{Mixture of Gaussians for Clustering}
 %
 The small scale experiments on probit regression indicate that SEP performs well for fully-observed probabilistic models. Although it is not the main focus of the paper, we sought to test the flexibility of the method by applying it to a latent variable model, specifically a Mixture of Gaussians. A synthetic MoGs dataset containing $N=200$ datapoints was constructed comprising $J=4$ Gaussians. The means were sampled from a Gaussian distribution, $p(\bm{\mu}_j)= \mathcal{N}(\bm{\mu}; \bm{m}, \mathrm{I})$, the cluster identity variables were sampled from a uniform categorical distribution $p(\bm{h}_n = j) = 1/4$, and each mixture component was isotropic $p(\bm{x}_n | \bm{h}_n) = \mathcal{N}(\bm{x}_n; \bm{\mu}_{\bm{h}_n}, 0.5^2 I)$. EP, ADF and SEP were performed to approximate the joint posterior over the cluster means $\{ \bm{\mu}_j\}$ and cluster identity variables $\{ \bm{h}_n \}$ (the other parameters were assumed known). 
 
