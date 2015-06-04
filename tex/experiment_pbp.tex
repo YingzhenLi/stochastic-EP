@@ -1,8 +1,8 @@
 \subsection{Probabilistic back-propagation}
 
-Probabilistic-backpropagation (PBP) \cite{hernandez2015probabilistic} is a
+The final set of tests consider more complicated models and large datasets. Specifically we evaluate the methods for probabilistic-backpropagation (PBP) \cite{hernandez2015probabilistic}, a
 recent state-of-the-art method for scalable approximate inference in neural
-network models. PBP works by doing several iterations of ADF over the training
+network models. Previous implementations of PBP perform several iterations of ADF over the training
 data.  The moment-matching operations required by ADF are computed by
 first propagating the uncertainty on the synaptic weights forward through the network
 and then computing the gradient of the marginal likelihood by backpropagation.
@@ -11,7 +11,7 @@ when the amount of available data is very large.
 
 We performed several experiments to asses the accuracy of different implementations of PBP
 based on ADF, SEP and EP. We considered neural networks with 100 hidden units and followed the same experimental protocol 
-as the one described by \cite{hernandez2015probabilistic}.
+as described by \cite{hernandez2015probabilistic}\todo[fancyline]{need to reference the datasets}.
 Table 2 shows the average test RMSE and test log-likelihood for each method.
 Interestingly, SEP and ADF often outperform EP in this case.
 Finally, Table 3 shows the reduction in memory consumption when SEP is compared with EP.
@@ -50,13 +50,13 @@ Year&\bf{8.879}&\bf{   NA}&8.922&   NA&8.914&   NA
 %\begin{minipage}[!t]{0.6\linewidth}
 \small
 \centering 
-\begin{tabular}{lrrr}\hline \bf{Dataset}& $N$ & $d$ & MB reduced\\ \hline 
-Kin8nm & 8,192 & 8 & 58.46MB \\ 
-Naval & 11,934 & 16 & 147.84MB\\ 
-Power Plant & 9,568 & 4 & 37.98MB\\ 
-Protein & 45,730 & 9 & \bf{694.02MB}\\ 
-Wine & 1,599 & 11 & 14.30MB\\ 
-Year & 515,340 & 90 & \bf{65107.34MB}\\ \hline 
+\begin{tabular}{lrrr}\hline \bf{Dataset}& $N$ & $d$ & MB reduction\\ \hline 
+Kin8nm & 8,192 & 8 & 58MB \\ 
+Naval & 11,934 & 16 & 147MB\\ 
+Power Plant & 9,568 & 4 & 37MB\\ 
+Protein & 45,730 & 9 & \bf{694MB}\\ 
+Wine & 1,599 & 11 & 14MB\\ 
+Year & 515,340 & 90 & \bf{65107MB}\\ \hline 
 \end{tabular} 
 \caption{ Memory reduction of SEP from full EP. } \label{tab:memory} 
 %\end{minipage}

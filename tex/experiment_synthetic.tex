@@ -1,7 +1,8 @@
-We evaluate SEP on both synthetic and real-world data, and for brevity we omit the mathematical details. In synthetic tests we compare the approximations against the true posterior constructed by No-U-Turn sampler (NUTS) \cite{hoffman:nuts} implemented in \texttt{stan}\footnote{\url{http://mc-stan.org/pystan.html}}. We repeat all tests for 5 times.
-%
-For real datasets we test classification tasks with probit regression. We further conduct regression tasks using neural networks trained with probabilistic back-propagation \cite{miguel:pbp}, which is based on ADF in the first place. We modify the available code\footnote{\url{https://github.com/HIPS/Probabilistic-Backpropagation}} to support full EP and SEP training and compare their performances to the reported ADF results.
+%We evaluate SEP on both synthetic and real-world data, and for brevity we omit the mathematical details. In synthetic tests we compare the approximations against the true posterior constructed by No-U-Turn sampler (NUTS) \cite{hoffman:nuts} implemented in \texttt{stan}\footnote{\url{http://mc-stan.org/pystan.html}}. We repeat all tests for 5 times.
+%%
+%For real datasets we test classification tasks with probit regression. We further conduct regression tasks using neural networks trained with probabilistic back-propagation \cite{miguel:pbp}, which is based on ADF in the first place. We modify the available code\footnote{\url{https://github.com/HIPS/Probabilistic-Backpropagation}} to support full EP and SEP training and compare their performances to the reported ADF results.
 
+The purpose of the experiments was to evaluate SEP on a number of datasets (synthetic and real-world, small and large) and on a number of models (probit regression, Mixture of Gaussians and Bayesian neural networks).
 
 %%%% SECOND EXAMPLE %%%%
 \subsection{Bayesian Probit Regression}
@@ -18,7 +19,7 @@ Results in Figure \ref{fig:sep_probit} indicate that EP is the best performing m
 
 To verify whether these conclusions about the granularity of the approximation hold in real datasets, we sampled $N=1,000$ datapoints for each of the digits in MNIST and performed odd-vs-even classification. Each digit class was assigned its own global approximating factor, $K=10$. We compare the log-likelihood of a test set using ADF, SEP ($K=1$), full EP and DSEP ($K=10$) in Figure \ref{fig:mnist}. EP and DSEP significantly outperform ADF. DSEP is slightly worse than full EP initially, however it reduces the memory to 0.001\% of full EP without losing substantial accuracy. SEP's performance was still increasing at the end of learning and was slightly better than ADF.
 
-Finally, we tested SEP's performance on six small binary classification datasets from the UCI machine learning repository.\footnote{\url{https://archive.ics.uci.edu/ml/index.html}} We did not consider the effect of mini-batches or the granularity of the approximation, using $K=M=1$. The classification results are summarised in Table \ref{tab:probit_results}. ADF performed reasonably well on the root mean square error (RMSE) metric, presumably because it tends to learn a good approximation to the posterior mode. However, the posterior variance is poorly approximated and therefore ADF returns poor test log-likelihood scores. EP achieves significantly higher test log-likelihood than ADF indicating that a superior approximation to the posterior variance is attained. Crucially, SEP performs very similarly to EP, implying that SEP is an accurate alternative to EP even for small datasets.
+Finally, we tested SEP's performance on six small binary classification datasets from the UCI machine learning repository.\footnote{\url{https://archive.ics.uci.edu/ml/index.html}} We did not consider the effect of mini-batches or the granularity of the approximation, using $K=M=1$. The classification results are summarised in Table \ref{tab:probit_results}. ADF performed reasonably well on the root mean square error (RMSE) metric, presumably because it tends to learn a good approximation to the posterior mode. However, the posterior variance is poorly approximated and therefore ADF returns poor test log-likelihood scores. EP achieves significantly higher test log-likelihood than ADF indicating that a superior approximation to the posterior variance is attained. Crucially, SEP performs very similarly to EP, implying that SEP is an accurate alternative to EP even though it is refining a cheaper global posterior approximation.\todo[fancyline]{mention N here and the memory saving?}
 
 \begin{figure}
 \centering
@@ -65,26 +66,29 @@ Pima&0.242&0.0093&0.244&0.0098&\bf{0.241}&\bf{0.0093}
 Sonar&\bf{0.198}&\bf{0.0208}&0.198&0.0217&0.198&0.0243
 	&-0.461&0.053&-0.418&0.021&\bf{-0.415}&\bf{0.021}\\
  \hline \end{tabular} 
- \caption{ Average test results all methods on Probit regression. All methods capture a good posterior mean, however EP outperforms ADF in terms of test log-likelihood on almost all the datasets, with SEP very close to EP.}
+ \caption{ Average test results all methods on Probit regression. All methods capture a good posterior mean, however EP outperforms ADF in terms of test log-likelihood on almost all the datasets, with SEP performing similarly to EP.}
  \end{table} 
  
  %
 %%%% FIRST EXAMPLE %%%%
 \subsection{Mixture of Gaussians for clustering}
-We start from clustering using mixture of Gaussians. We construct the simulation model with $J=4$ Gaussians: $\bm{\mu}_j \sim \mathcal{N}(\bm{\mu}; \bm{m}, \Sigma)$, $\bm{y}_n \sim p_0(\bm{h}_n = j) \propto 1$, and $\bm{x}_n | \bm{y}_n \sim \mathcal{N}(\bm{x}_n; \bm{\mu}_{\bm{y}_n}, 0.5^2 I)$. We simulate 200 datapoints for clustering, and construct another Gaussian mixture model with uniform prior on $\bm{h}_n$ and independent prior $\mathcal{N}(\bm{\mu}_j; \bm{m}_j, 10I), \bm{m}_j \sim \mathcal{N}(\bm{m}; \bm{0}, I)$ on the Gaussian means. EP, SEP and ADF are applied to approximate the posterior of $\bm{\theta} = \{ \bm{\mu}_j \}$ with Gaussians and $\{\bm{h}_n\}$ with categorical distributions, though the storage for the latter terms is not required. 
+%
+The small scale experiments on probit regression indicate that SEP performs well for fully-observed probabilistic models. Although it is not the main focus of the paper, we sought to test the flexibility of the method by applying it to a latent variable model, specifically a Mixture of Gaussians. A synthetic MoGs dataset containing $N=200$ datapoints was constructed comprising $J=4$ Gaussians. The means were sampled from a Gaussian distribution, $p(\bm{\mu}_j)= \mathcal{N}(\bm{\mu}; \bm{m}, \mathrm{I})$, the cluster identity variables were sampled from a uniform categorical distribution $p(\bm{h}_n = j) = 1/4$, and each mixture component was isotropic $p(\bm{x}_n | \bm{h}_n) = \mathcal{N}(\bm{x}_n; \bm{\mu}_{\bm{h}_n}, 0.5^2 I)$. EP, ADF and SEP were performed to approximate the joint posterior over the cluster means $\{ \bm{\mu}_j\}$ and cluster identity variables $\{ \bm{h}_n \}$ (the other parameters were assumed known). 
 
-Figure \ref{fig:gmm_visualised} visualises the estimated posterior and EP inference results after 200 iterations. The result strongly depends on the accurate estimation of posterior mode and thus ADF works well, however ADF actually converges towards a point estimation of some posterior mode. Instead, SEP captures the uncertainty and returns nearly identical approximations as full EP. We quantise the error of EP methods in Figure \ref{fig:gmm_error} by computing the averaged Frobenius norm of the difference between the the closest means (covariance) of true posterior samples and EP approximations. This further confirms that SEP approximates EP well.
+%EP, SEP and ADF are applied to approximate the posterior of $\bm{\theta} = \{ \bm{\mu}_j \}$ with Gaussians and $\{\bm{h}_n\}$ with categorical distributions, though the storage for the latter terms is not required. 
+
+Figure \ref{fig:gmm_visualised} visualises the approximate posteriors after 200 iterations. All methods return good estimates for the means, but ADF collapses towards a point estimate as expected. SEP, in contrast, captures the uncertainty and returns nearly identical approximations to EP. The accuracy of the methods is quantified in Fig.~\ref{fig:gmm_error} by comparing the approximate posteriors to those obtained from the No-U-Turn sampler. These measures confirm that SEP approximates EP well.
 
 \begin{figure}
 \centering
-\def\svgwidth{0.50\linewidth}
-\subfigure[\label{fig:gmm_visualised}]{
-\input{fig/gmm1.pdf_tex}}
-%
-\hspace{0.1in}
-%
-\def\svgwidth{0.40\linewidth}
-\subfigure[\label{fig:gmm_error}]{
-\input{fig/gmm_error.pdf_tex}}
-\caption{Posterior approximation for the mean of the Gaussian components. (a) shows the estimated variance with sampling or EP methods in 98\% confidence level. The coloured dots indicate the true label (top-left) or the inferred cluster assignments (the rest). In (b) we show the quantitative error of EP approximations against the sampled ground truth, on mean (top) and covariance (bottom).}
+%\def\svgwidth{0.50\linewidth}
+%\subfigure[\label{fig:gmm_visualised}]{
+%\input{fig/gmm1.pdf_tex}}
+%%
+%\hspace{0.1in}
+%%
+%\def\svgwidth{0.40\linewidth}
+%\subfigure[\label{fig:gmm_error}]{
+%\input{fig/gmm_error.pdf_tex}}
+\caption{Posterior approximation for the mean of the Gaussian components. (a) shows posterior approximations over the cluster means (98\% confidence level). The coloured dots indicate the true label (top-left) or the inferred cluster assignments (the rest). In (b) we show the error of the approximations as measured by the averaged Frobenius norm of the difference between the the closest means posterior samples and EP approximations, mean (top) and covariance (bottom).}
 \end{figure}
