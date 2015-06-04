@@ -68,7 +68,7 @@ D_{ \mhyphen 1}(p(\bm{\theta})||q(\bm{\theta})) &\buildrel\triangle\over = \lim_
 
 Now we introduce the PEP algorithm with power $1 / \beta$ as a practical alternative of alpha-EP with $\alpha = -1 + 2 / \beta$ \footnote{Alpha-projection, except $\alpha = \pm 1$, is difficult to solve directly in general.}. Precisely PEP uses moment projection $\mathtt{proj}[q(\bm{\theta}) (p(\bm{x}_n|\bm{\theta}) / f_n(\theta))^{1/\beta}]$ and the stationary point of this iterative procedure is also the fixed points of the corresponded alpha-divergence. 
 %
-We summarise PEP, using the form of alpha-EP, in Algorithm \ref{alg:pep}. We further extend the alpha-projection idea to specify stochastic PEP in Algorithm \ref{alg:spep}. Likewise SEP/AEP corresponds to stochastic/averaged PEP with $\alpha = 1$ or $\beta = 1$, and the ``variational'' SEP/AEP chooses $\alpha = -1$. One should notice that choosing $\beta \rightarrow \infty$ does not recover information projection. The latter case is often derived using variational techniques, and we further link the ``variational'' SEP/AEP with variational inference in the next section.
+We summarise PEP, using the form of alpha-EP, in Algorithm \ref{alg:pep}. We further extend the alpha-projection idea to specify stochastic PEP in Algorithm \ref{alg:spep}. Likewise SEP/AEP corresponds to stochastic/averaged PEP with $\alpha = 1$, and the ``variational'' SEP/AEP chooses $\alpha = -1$. The latter case is often derived using variational techniques, and we further link the ``variational'' SEP/AEP with variational inference in the next section.
 
 \begin{figure}[!t]
 % UGLY USE OF \vspace & \hspace follows
@@ -112,25 +112,28 @@ We summarise PEP, using the form of alpha-EP, in Algorithm \ref{alg:pep}. We fur
 \subsection{Equivalence between the ``Variational'' AEP and Variational Inference}
 We briefly discuss the equivalence between ``variational'' AEP and variational inference.  
 %
-Without loss of generality we provide a proof on exponential families. We further assume that the prior $p_0(\bm{\theta})$ and the approximate posterior $q(\bm{\theta})$ are in the same family, but in general we might use different structures for approximate posterior and our proof still applies. 
+Without loss of generality we provide a proof on exponential families. 
 
-We first define the exponential families for both likelihood terms and the approximate posterior,
+We first define the exponential families for prior, likelihood terms and the approximate posterior,
 \begin{align}
+\mathcal{P}_0 &= \{p_0(\bm{\theta}) = \exp \left( \langle \bm{\epsilon}_0, \gamma(\bm{\theta}) \rangle - A(\bm{\epsilon}_0) \right) |\ \bm{\epsilon}_0 \in \bm{E} \ s.t.~ A(\bm{\epsilon}_0) < \infty \}, \\
 \mathcal{P} &= \{p(\bm{x} | \bm{\theta}) = \exp \left( \langle \beta(\bm{\theta}), \psi(\bm{x}) \rangle - A(\bm{\theta}) \right) |\ \bm{\theta} \in \bm{\Theta} \ s.t.~ A(\bm{\theta}) < \infty \}, \\
-\mathcal{Q} &= \{q(\bm{\theta}) = \exp \left( \langle \bm{\lambda}_q, \phi(\bm{x}) \rangle - A(\bm{\lambda}_q) \right) |\ \bm{\lambda}_q \in \bm{\Lambda} \ s.t.~ A(\bm{\lambda}_q) < \infty \},
+\mathcal{Q} &= \{q(\bm{\theta}) = \exp \left( \langle \bm{\lambda}_q, \phi(\bm{\theta}) \rangle - A(\bm{\lambda}_q) \right) |\ \bm{\lambda}_q \in \bm{\Lambda} \ s.t.~ A(\bm{\lambda}_q) < \infty \},
 \end{align}
-where $A(\cdot)$ represents the log partition function to guarantee a valid distribution. We denote the natural parameters of the prior $p_0(\bm{\theta})$, the approximating factor $f(\bm{\theta})$, and the intermediate answers $f_n(\bm{\theta})$ as $\bm{\lambda}_0$, $\bm{\lambda}$ and $\bm{\lambda}_n$, respectively. We next write the exponential family containing the true posterior and the tilted distribution:
+where $A(\cdot)$ represents the log partition function to guarantee a valid distribution. We denote the natural parameters of the approximating factor $f(\bm{\theta})$, and the intermediate answers $f_n(\bm{\theta})$ as $\bm{\lambda}$ and $\bm{\lambda}_n$, respectively. In EP we often use $\mathcal{P}_0 \subset \mathcal{Q}$ and in that case we also write $\bm{\lambda}_0$ as the natural parameter of $p_0$ when considering it in family $\mathcal{Q}$.
+
+We next write the exponential family containing the true posterior and the tilted distribution:
 \begin{equation}
 \mathcal{\tilde{P}} = \{p(\bm{\theta}) = \exp \left( \langle \bm{\eta}, \Phi(\bm{\theta}) \rangle - A(\bm{\eta}) \right) |\ \bm{\eta} \in \bm{H} \ s.t.~ A(\bm{\eta}) < \infty \}, \\
 \end{equation}
-with sufficient statistics $\Phi(\bm{\theta}) = [\phi(\bm{\theta}), \beta(\bm{\theta}), A(\bm{\theta})]$ \footnote{We assume $\phi$, $\beta$ and $A$ are linearly independent wrt.~operation $E_{\tilde{p}}[\cdot], \forall \tilde{p} \in \tilde{\mathcal{P}}$ w.l.o.g.}. It is straight-forward that the true posterior has natural parameter $\bm{\eta}_p = [\bm{\lambda}_0, \sum_{n} \psi(\bm{x}_n), -N]$, and the tilted distributions $\tilde{p}_n(\bm{\theta})$ has $\bm{\eta}_n = [\bm{\lambda}_{-1}, \psi(\bm{x}_n), -1]$. We also write $\bm{\lambda}_q \leftarrow \mathtt{proj}[\bm{\eta}]$ to denote the moment projection of distributions in $\mathcal{\tilde{P}}$ to $\mathcal{Q}$.
+with sufficient statistics $\Phi(\bm{\theta}) = [\gamma(\bm{\theta}), \phi(\bm{\theta}), \beta(\bm{\theta}), A(\bm{\theta})]$ \footnote{We assume $\phi$, $\beta$ and $A$ are linearly independent wrt.~operation $E_{\tilde{p}}[\cdot], \forall \tilde{p} \in \tilde{\mathcal{P}}$ w.l.o.g.}. It is straight-forward that the true posterior has natural parameter $\bm{\eta}_p = [\bm{\epsilon}_0, \bm{0},\sum_{n} \psi(\bm{x}_n), -N]$, and the tilted distributions $\tilde{p}_n(\bm{\theta})$ has $\bm{\eta}_n = [\bm{0}, \bm{\lambda}_{-1}, \psi(\bm{x}_n), -1]$. We also write $\bm{\lambda}_q \leftarrow \mathtt{proj}[\bm{\eta}]$ to denote the moment projection of distributions in $\mathcal{\tilde{P}}$ to $\mathcal{Q}$.
 %
 We recall the AEP algorithm with current notations, using no-damped update,
 %
 \begin{align}
 \bm{\lambda}_{-1} & = \bm{\lambda}_0 + \frac{N-1}{N} \sum_{n=1}^N \bm{\lambda}_n, \\
-\bm{\lambda}_n &\leftarrow \mathtt{\alpha \mhyphen proj}[\bm{\eta}_n] - \bm{\lambda}_{-1}, \\
-\bm{\lambda}_q &\leftarrow \bm{\lambda}_0 + \sum_{n=1}^N \bm{\lambda}_n.
+\bm{\lambda}_n &= \mathtt{\alpha \mhyphen proj}[\bm{\eta}_n] - \bm{\lambda}_{-1}, \\
+\bm{\lambda}_q &= \bm{\lambda}_0 + \sum_{n=1}^N \bm{\lambda}_n.
 \end{align}
 %
 %
@@ -140,7 +143,7 @@ Now we state the following theorem.
 The ``variational'' averaged expectation propagation algorithm, when converged to a fixed point, returns a local optimum of variational inference.
 \end{theorem}
 \begin{proof}
-Consider the same factorisation structure, $\bm{\lambda}_q = \bm{\lambda}_0 + N \bm{\lambda}$, for both VI and the ``variational'' AEP. VI directly optimises the global KL divergence wrt.~$q(\bm{\theta})$:
+We first consider the case that $\mathcal{P}_0 \subset \mathcal{Q}$, which means $\bm{\lambda}_0$ is a fixed vector corresponding to the prior term. VI directly optimises the global KL divergence wrt.~$q(\bm{\theta})$:
 \begin{equation}
 KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \langle \bm{\lambda}_q, E_q \phi(\bm{\theta}) \rangle - A(\bm{\lambda}_q) - \langle \bm{\eta}_p, E_q \Phi(\bm{\theta}) \rangle + A(\bm{\eta}_p).
 \end{equation}
@@ -148,19 +151,36 @@ Using $\bm{\eta}_p = [\bm{\lambda}_0, \sum_{n} \psi(\bm{x}_n), -N]$,
 \begin{equation}
 \nabla_{\bm{\lambda}_q}^{VB} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \langle \bm{\lambda}_q - \bm{\lambda}_0, \nabla_{\bm{\lambda}_q} E_q \phi(\bm{\theta}) \rangle - \langle \sum_{n} \psi(\bm{x}_n), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle + N \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
 \end{equation}
-On the other hand, the inner loop of the ``variational'' AEP finds the optimiser of the following divergence
+Where $\bm{\lambda}_q - \bm{\lambda}_0 = \sum_n \bm{\lambda}_n$ by definition. On the other hand, the inner loop of the ``variational'' AEP finds the optimiser of the following divergence
 \begin{equation}
 KL(q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})) = \langle \bm{\lambda}_q, E_q \phi(\bm{\theta}) \rangle - A(\bm{\lambda}_q) - \langle \bm{\eta}_n, E_q \Phi(\bm{\theta}) \rangle + A(\bm{\eta}_n).
 \end{equation}
-Now the local update we are interested in is $\bm{\lambda}_n = \bm{\lambda}_q - \bm{\lambda}_{-1}$, and we treat the cavity parameter $\bm{\lambda}_{-1}$ as a constant in this optimisation. Similarly we obtain the graident wrt.~$\bm{\lambda}_n$
+Now the local update we are interested in is $\bm{\lambda}_n \leftarrow \bm{\lambda}_q - \bm{\lambda}_{-1}$, and we treat the cavity parameter $\bm{\lambda}_{-1}$ as a constant in this optimisation. Similarly we obtain the graident wrt.~$\bm{\lambda}_n$
 \begin{equation}
-\nabla_{\bm{\lambda}_n}^{AEP} KL(q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})) = \langle \bm{\lambda}_q - \bm{\lambda}_{-1}, \nabla_{\bm{\lambda}_q} E_q \phi(\bm{\theta}) \rangle - \langle \psi(\bm{x}_n), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle +  \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
+\nabla_{\bm{\lambda}_n}^{AEP} KL(q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})) = \langle \bm{\lambda}_n, \nabla_{\bm{\lambda}_q} E_q \phi(\bm{\theta}) \rangle - \langle \psi(\bm{x}_n), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle +  \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
 \end{equation}
 If we view the ``variational'' AEP as a gradient descent method, from $\bm{\lambda}_q \leftarrow \bm{\lambda}_0 + \sum_{n=1}^N \bm{\lambda}_n$ we have the gradient of the global parameter constructed by summing the gradients of the local parameters. Readers can verify that the gradient of the global parameter is equivalent to the gradient of VI objective, i.e.
 \begin{equation}
-\nabla_{\bm{\lambda}_q}^{VB} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \sum_n \nabla_{\bm{\lambda}_n}^{AEP} KL(q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})).
+\nabla_{\bm{\lambda}_q}^{VB} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \sum_{n=1}^N \nabla_{\bm{\lambda}_n}^{AEP} KL(q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})).
 \end{equation}
 This implies that the fixed points of ``variational'' AEP are also stationary points of VI.
+
+We next consider the general case where $\mathcal{P}_0 \neq \mathcal{Q}$, which means we need to update $\bm{\lambda}_0$ in parallel as well. Now the gradient in VI case changes to
+\begin{equation}
+\begin{aligned}
+\nabla_{\bm{\lambda}_q}^{VB} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) &= \langle \bm{\lambda}_q, \nabla_{\bm{\lambda}_q} E_q \phi(\bm{\theta}) \rangle - \langle \bm{\epsilon}_0, \nabla_{\bm{\lambda}_q} E_q \gamma(\bm{\theta}) \rangle \\
+	&- \langle \sum_{n} \psi(\bm{x}_n), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle + N \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
+\end{aligned}
+\end{equation}
+On the other hand, the ``variational'' AEP also approximate the prior $p_0(\bm{\theta})$ by updating $\bm{\lambda}_0$ with normal EP. The cavity distribution is computed by $\bm{\lambda}_{-0} = \bm{\lambda}_q - \bm{\lambda}_0$. We insert the prior to form the tilted distribution $\tilde{p}_0(\bm{\theta}) \propto q_{-0}(\bm{\theta}) p_0(\bm{\theta})$, and minimise the moment matching KL by noticing $\bm{\eta}_0 = [\bm{\epsilon}_0, \bm{\lambda}_{-0}, 0, 0]$ and new update:
+\begin{equation}
+\nabla_{\bm{\lambda}_0}^{AEP} KL(q(\bm{\theta}) || \tilde{p}_0(\bm{\theta})) = \langle \bm{\lambda}_0, \nabla_{\bm{\lambda}_q} E_q \phi(\bm{\theta}) \rangle - \langle \bm{\epsilon}_0, \nabla_{\bm{\lambda}_q} E_q \gamma(\bm{\theta}) \rangle.
+\end{equation}
+Finally readers can verify the following equivalence as well
+\begin{equation}
+\nabla_{\bm{\lambda}_q}^{VB} KL(q(\bm{\theta}) || p(\bm{\theta} | D)) = \sum_{n=0}^N \nabla_{\bm{\lambda}_n}^{AEP} KL(q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})),
+\end{equation}
+which finishes the proof.
 \end{proof}
 
 %
