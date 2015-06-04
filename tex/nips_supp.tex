@@ -171,7 +171,7 @@ We next consider the general case where $\mathcal{P}_0 \neq \mathcal{Q}$, which 
 	&- \langle \sum_{n} \psi(\bm{x}_n), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle + N \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
 \end{aligned}
 \end{equation}
-On the other hand, the ``variational'' AEP also approximate the prior $p_0(\bm{\theta})$ by updating $\bm{\lambda}_0$ with normal EP. The cavity distribution is computed by $\bm{\lambda}_{-0} = \bm{\lambda}_q - \bm{\lambda}_0$. We insert the prior to form the tilted distribution $\tilde{p}_0(\bm{\theta}) \propto q_{-0}(\bm{\theta}) p_0(\bm{\theta})$, and minimise the moment matching KL by noticing $\bm{\eta}_0 = [\bm{\epsilon}_0, \bm{\lambda}_{-0}, 0, 0]$ and new update:
+On the other hand, AVMP also approximate the prior $p_0(\bm{\theta})$ by updating $\bm{\lambda}_0$ with normal EP. The cavity distribution is computed by $\bm{\lambda}_{-0} = \bm{\lambda}_q - \bm{\lambda}_0$. We insert the prior to form the tilted distribution $\tilde{p}_0(\bm{\theta}) \propto q_{-0}(\bm{\theta}) p_0(\bm{\theta})$, and minimise the moment matching KL by noticing $\bm{\eta}_0 = [\bm{\epsilon}_0, \bm{\lambda}_{-0}, 0, 0]$ and new update:
 \begin{equation}
 \nabla_{\bm{\lambda}_q}^{AVMP} KL[q(\bm{\theta}) || \tilde{p}_0(\bm{\theta})] = \langle \bm{\lambda}_0, \nabla_{\bm{\lambda}_q} E_q \phi(\bm{\theta}) \rangle - \langle \bm{\epsilon}_0, \nabla_{\bm{\lambda}_q} E_q \gamma(\bm{\theta}) \rangle.
 \end{equation}
