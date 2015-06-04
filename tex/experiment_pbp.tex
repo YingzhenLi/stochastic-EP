@@ -20,7 +20,7 @@ one, Year, it is of several tens of gigabytes.
  
 \begin{table} 
 \small
-\centering \caption{ Average test results all methods. } \label{tab:results} \begin{tabular}{l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}}\hline 
+\centering \label{tab:results} \begin{tabular}{l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}}\hline 
 {} & \multicolumn{6}{c}{RMSE} & \multicolumn{6}{c}{test log-likelihood} \\
 \bf{Dataset}&\multicolumn{2}{c}{\bf{ ADF }}&\multicolumn{2}{c}{\bf{ SEP }}&\multicolumn{2}{c}{\bf{ EP }} &\multicolumn{2}{c}{\bf{ ADF }}&\multicolumn{2}{c}{\bf{ SEP }}&\multicolumn{2}{c}{\bf{ EP }} \\ \hline 
 %
@@ -41,7 +41,9 @@ Wine&\bf{0.635}&\bf{0.0079}&0.650&0.0082&0.637&0.0076
 %
 Year&\bf{8.879}&\bf{   NA}&8.922&   NA&8.914&   NA
 &\bf{-3.603}&\bf{  NA}&-3.924&  NA&-3.929&  NA\\
- \hline \end{tabular} \end{table} 
+ \hline \end{tabular} 
+\caption{ Average test results all methods. } 
+ \end{table} 
 
 
 \begin{table} 
