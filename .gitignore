@@ -1,0 +1,12 @@
+
+*.log
+
+tex/nips_sep.aux
+
+*.out
+
+*.pdf
+
+*.gz
+
+*.aux
