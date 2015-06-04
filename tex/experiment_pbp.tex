@@ -13,8 +13,7 @@ We performed several experiments to asses the accuracy of different implementati
 based on ADF, SEP and EP. We considered neural networks with 100 hidden units and followed the same experimental protocol 
 as described by \cite{hernandez2015probabilistic}\todo[fancyline]{need to reference the datasets}.
 Table 2 shows the average test RMSE and test log-likelihood for each method.
-Interestingly, SEP and ADF often outperform EP in this case.
-Finally, Table 3 shows the reduction in memory consumption when SEP is compared with EP.
+Interestingly, SEP and ADF often outperform EP in this case (although the results presented for ADF use a near-optimal number of sweeps and further iterations generally degrades performance). Finally, Table 3 shows the reduction in memory consumption when SEP is compared with EP.
 This reduction scales as a function of the dataset size and for the biggest
 one, Year, it is of several tens of gigabytes.
  
