@@ -227,16 +227,34 @@ In each update SEP gives the same answers as AEP in expectation if initialised a
 %
 This fixed point theorem applies to stochastic PEP as well when $\alpha \neq -1$, and importantly it also implies the pathology of constructing stochastic PEP with $\alpha$ taking to the limit $-1$. 
 
+%
 \begin{figure}
 \centering
 \def\svgwidth{0.35\linewidth}
 \subfigure[\label{fig:aep_vs_pep}]{
 \input{fig/aep_vs_pep.pdf_tex}}
 %
-\caption{A geometric view of AEP/PEP comparison.}
+\hspace{0.5in}
+%
+\def\svgwidth{0.4\linewidth}
+\subfigure[\label{fig:dep_sep_dsep}]{
+\input{fig/dep_sep_dsep.pdf_tex}}
+
+\caption{(a) A geometric view of AEP/PEP comparison. (b) A cartoon illustration of DEP, SEP and DSEP. For each algorithm we show the approximate posterior on the top and the tilted distribution at the bottom.}
+
 \end{figure}
 
 \section{Algorithmic Design Details: Comparing the distributed methods}
+We have shown in the main paper that a proper design of data partitioning improves SEP's approximation accuracy. This distributed algorithm is inspired by practices involving sampling. The Distributed EP (DEP) algorithm \cite{gelman:dep}\cite{xu:sms} presented in Algorithm \ref{alg:dep} first partitions the dataset into $K$ disjoint pieces $\{ D_k = \{\bm{x}_i\}_{i=1}^{N_k} \}$ with $N = \sum_{i=1}^K N_k$, which is well-justified since the true posterior can also be derived as
+\begin{align}
+p(\bm{\theta}|\mathcal{D}) &\propto p_0(\bm{\theta}) \prod_{k=1}^K p(\mathcal{D}_k|\bm{\theta}), \\
+p(\mathcal{D}_k|\bm{\theta}) &= \prod_{\bm{x}_n \in \mathcal{D}_k} p(\bm{x}_n | \bm{\theta}).
+\end{align}
+%
+Next DEP assigns factors to each sub-datasets likelihood, i.e.~$q(\bm{\theta}) \propto p_0(\bm{\theta}) f_k(\bm{\theta})$ with each $f_k(\bm{\theta})$ approximating $p(\mathcal{D}_k|\bm{\theta})$. The projection step is no longer analytically tractable, as the posterior with multiple datapoints lacks a closed form in general. Instead DEP computes moment matching by sampling methods, making DEP stochastic in the sense of moment approximation. 
+
+%
+To have a deterministic counterpart for DEP, we consider SEP/AEP inside each partition. We name this approach as Distributed SEP/AEP (DSEP/DAEP) and provide a comparison in Fig. \ref{fig:dep_sep_dsep} with DEP and SEP using sampling protocol. The two algorithms are also detailed in Algorithm \ref{alg:dsep} and \ref{alg:daep}, respectively. Unlike SEP, we remove a fraction of the current factor $f_k(\bm{\theta})$ with power $1/N_k$, which leaves the cavity distribution $q_{-1}(\bm{\theta})$ approximately containing $N-1$ approximation terms. Like SEP, this guarantees the correct estimation of uncertainty level as SEP corrects ADF's overfitting. 
 
 
 \begin{figure}[!t]
@@ -291,28 +309,17 @@ This fixed point theorem applies to stochastic PEP as well when $\alpha \neq -1$
 \end{figure}
 
 \section{Further Experimental Results}
-We further test the performance of SEP with sampling methods to compute moments \footnote{code adjusted from \texttt{ep-stan}: \url{https://github.com/gelman/ep-stan}}. We re-use the settings of probit regression but change the probit unit to sigmoid function, making the moment projection analytically intractable. We partition the dataset into $K = 20$ subsets $\{\mathcal{D}_k\}$ and consider the true posterior as
-\begin{equation}
-p(\bm{\theta}|\mathcal{D}) \propto p_0(\bm{\theta}) \prod_{k=1}^K p(\mathcal{D}_k|\bm{\theta}).
-\end{equation}
-We construct the approximate posterior with local factors over the subsets and tied them in SEP/AEP as before. Again as presented in Fig. \ref{fig:sep_logit}, SEP performs almost as well as EP, which further justifies SEP even with sampling methods. Also AEP is indistinguishable from DEP, but it reduces memory by a factor of $K$.
+
+We also provide the memory consumption details for experiments using probabilistic back-propagation (PBP) in Table \ref{tab:memory}. We observe substantial memory reductions by running SEP instead of EP, while still attaining similar accuracies. Experientially for Year which is a typical large-scale dataset both in the number of observations $N$ and the dimensionality $D$, SEP achieves tens of gigabytes savings. In fact we perform the test for EP using a machine with more than 100GB RAM, which demonstrates the incredibly huge memory requirement of full EP. 
+
+Although not a main purpuse, we further test the performance of SEP with sampling methods to compute moments \footnote{code adjusted from \texttt{ep-stan}: \url{https://github.com/gelman/ep-stan}}. We re-use the settings of probit regression but change the probit unit to sigmoid function, making the moment projection analytically intractable. We partition the dataset into $K = 20$ subsets $\{\mathcal{D}_k\}$, construct the approximate posterior with local factors over the subsets, and tied them in SEP/AEP as before. Again as presented in Fig. \ref{fig:sep_logit}, SEP performs almost as well as EP, which further justifies SEP even with sampling methods. Also AEP is indistinguishable from DEP, but it reduces memory by a factor of $K$.
 
 \begin{figure}
 \centering
 %
-\def\svgwidth{0.3\linewidth}
-\subfigure[\label{fig:sep_logit}]{
-\input{fig/sep_logit.pdf_tex}}
-%
-\caption{Performance of EP methods on Bayesian logistic regression with sampling moment computations.}
-\end{figure}
+\begin{minipage}[!t]{0.5\linewidth}
+\subfigure[\label{tab:memory}]{
 
-We also provide the memory consumption details for experiments using probabilistic back-propagation (PBP) in Table \ref{tab:memory}. We observe substantial memory reductions by running SEP instead of EP, while still attaining similar accuracies. Experientially for Year which is a typical large-scale dataset both in the number of observations $N$ and the dimensionality $D$, SEP achieves tens of gigabytes savings. In fact we perform the test for EP using a machine with more than 100GB RAM, which demonstrates the incredibly huge memory requirement of full EP. 
-
-\begin{table} 
-\begin{minipage}[!t]{0.6\linewidth}
-\small
-\centering 
 \begin{tabular}{lrrr}\hline \bf{Dataset}& $N$ & $d$ & MB reduction\\ \hline 
 Kin8nm & 8,192 & 8 & 58MB \\ 
 Naval & 11,934 & 16 & 147MB\\ 
@@ -320,11 +327,38 @@ Power Plant & 9,568 & 4 & 37MB\\
 Protein & 45,730 & 9 & \bf{694MB}\\ 
 Wine & 1,599 & 11 & 14MB\\ 
 Year & 515,340 & 90 & \bf{65107MB}\\ \hline 
-\end{tabular} 
-\caption{ Memory reduction of SEP from full EP. } \label{tab:memory} 
+\hspace{1mm}\\ \vspace{1.0mm} \hspace{1mm}\\
+\end{tabular}
+} 
 \end{minipage}
-\end{table} 
+%
+\hspace{0.3in}
+%
+\begin{minipage}[!t]{0.35\linewidth}
+\def\svgwidth{0.7\linewidth}
+\subfigure[\label{fig:sep_logit}]{
+\input{fig/sep_logit.pdf_tex}
+}
+\end{minipage}
+%
+\caption{(a) Memory reduction figures on regression datasets. (b) Performance of EP methods on Bayesian logistic regression with sampling moment computations.}
+\end{figure}
 
+%\begin{table} 
+%\begin{minipage}[!t]{0.6\linewidth}
+%\small
+%\centering 
+%\begin{tabular}{lrrr}\hline \bf{Dataset}& $N$ & $d$ & MB reduction\\ \hline 
+%Kin8nm & 8,192 & 8 & 58MB \\ 
+%Naval & 11,934 & 16 & 147MB\\ 
+%Power Plant & 9,568 & 4 & 37MB\\ 
+%Protein & 45,730 & 9 & \bf{694MB}\\ 
+%Wine & 1,599 & 11 & 14MB\\ 
+%Year & 515,340 & 90 & \bf{65107MB}\\ \hline 
+%\end{tabular} 
+%\caption{ Memory reduction of SEP from full EP. } \label{tab:memory} 
+%\end{minipage}
+%\end{table} 
 
 \subsubsection*{References}
 \renewcommand{\section}[2]{}
