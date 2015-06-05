@@ -7,13 +7,21 @@ The purpose of the experiments was to evaluate SEP on a number of datasets (synt
 %%%% SECOND EXAMPLE %%%%
 \subsection{Bayesian Probit Regression}
 %
+<<<<<<< HEAD
 The first experiments considered a simple Bayesian classification problem and investigated the stability and quality of SEP in relation to EP and ADF as well as the effect of using mini-batches and varying the granularity of the approximation. The model comprised a probit likelihood function $P(\bm{y}_n = 1|\theta) = \Phi(\bm{\theta}^T \bm{x}_n)$ and a Gaussian prior over the hyper-plane parameter  $p(\bm{\theta}) = \mathcal{N}(\bm{\theta}; \bm{0}, \gamma I)$.  
+=======
+The first experiments considered a simple Bayesian classification problem and investigated the stability and quality of SEP in relation to EP and ADF as well as the effect of using mini-batches and varying the granularity of the approximation. The model comprised a probit likelihood function $P(\bm{y}_n = 1|\theta) = \Phi(\bm{\theta}^T \bm{x}_n)$ and a Gaussian prior over the hyper-plane parameter  $p(\bm{\theta}) = \mathcal{N}(\bm{\theta}; \bm{0}, \sigma^2 I)$.  
+>>>>>>> origin/master
 
 The first experiments used synthetic data comprised $N=5,000$ datapoints $\{ (\bm{x}_n, \bm{y}_n) \}$. The inputs $\bm{x}_n$ were $D=4$ dimensional and were either sampled from a single Gaussian distribution (Fig.~\ref{fig:sep_probit}) or from a Mixture of Gaussians (MoGs) with $J=5$ components (Fig.~\ref{fig:daep_probit}) to investigate the sensitivity of the methods to the homogeneity of the dataset. The labels were produced by sampling from the generative model. Performance was measured by computing an approximation of $\mathrm{KL}(p(\bm{\theta}|\mathcal{D}) || q(\bm{\theta}))$ where $p(\bm{\theta}|\mathcal{D})$ was replaced by a Gaussian that had the same mean and covariance as samples drawn from the posterior using the No-U-Turn sampler (NUTS) \cite{hoffman:nuts}.
 
  %The binary labels $\bm{y}_n$ are sampled from a Probit unit with a hyper-plane sampled from a Gaussian $\bm{\theta}_{true} \sim \mathcal{N}(\bm{\theta}; \bm{0}, I)$. For learning we use a Gaussian prior and measure the
 
+<<<<<<< HEAD
 Results in Fig.~\ref{fig:sep_probit} indicate that EP is the best performing method and that ADF collapses towards a delta function at the posterior mean as expected. SEP converges to a solution which appears to be of similar quality to that obtained by EP for the dataset containing Gaussian inputs, but slightly worse when the MoGs was used. Variants of SEP that used larger mini-batches fluctuated less, but typically took longer times to converge. The utility of finer grained approximations depended on the homogeneity of the data. For the dataset containing Gaussian inputs increasing the number of approximation factors from $K=1$ (SEP) to $K=50$ (DAEP) provided no advantage. However, for the second dataset containing MoG inputs, finer grained approximations were found to be advantageous if the datapoints from each mixture component are assigned to the same approximating factor. Generally it was found that there is no advantage to retaining more approximating factors than there were clusters in the dataset.  
+=======
+Results in Fig. \ref{fig:sep_probit} indicate that EP is the best performing method and that ADF collapses towards a delta function at the posterior mean as expected. SEP converges to a solution which appears to be of similar quality to that obtained by EP for the dataset containing Gaussian inputs, but slightly worse when the MoGs was used. Variants of SEP that used larger mini-batches fluctuated less, but typically took longer times to converge.\todo[fancyline]{From the fig (a) -- looks like larger M is faster?!} The utility of finer grained approximations depended on the homogeneity of the data. For the dataset containing Gaussian inputs increasing the number of approximation factors from $K=1$ (SEP) to $K=50$ (DAEP) provided no advantage. However, for the second dataset containing MoG inputs, finer grained approximations were found to be advantageous if the datapoints from each mixture component are assigned to the same approximating factor. Generally it was found that there is no advantage to retaining more approximating factors than there were clusters in the dataset.  
+>>>>>>> origin/master
 
 %We change the simulation model of $\bm{x}$ to a mixture of $J=5$ Gaussians, and partition the datasets into $K$ minibatches with datapoints from the same cluster. Figure \ref{fig:daep_probit} shows that SEP converges to slightly worse approximations as it only maintains the global posterior. In contrast DAEP performs nearly identical to full EP in convergence. The number of factors $K$ has little effect on the performance once $K \geq J$, indicating that the contributions of datapoints in the same cluster are very similar. 
 
@@ -81,13 +89,13 @@ Figure \ref{fig:gmm_visualised} visualises the approximate posteriors after 200 
 
 \begin{figure}
 \centering
-\def\svgwidth{0.50\linewidth}
+\def\svgwidth{0.45\linewidth}
 \subfigure[\label{fig:gmm_visualised}]{
 \input{fig/gmm1.pdf_tex}}
 %
 \hspace{0.1in}
 %
-\def\svgwidth{0.40\linewidth}
+\def\svgwidth{0.35\linewidth}
 \subfigure[\label{fig:gmm_error}]{
 \input{fig/gmm_error.pdf_tex}}
 \caption{Posterior approximation for the mean of the Gaussian components. (a) shows posterior approximations over the cluster means (98\% confidence level). The coloured dots indicate the true label (top-left) or the inferred cluster assignments (the rest). In (b) we show the error of the approximations as measured by the averaged Frobenius norm of the difference between the the closest means posterior samples and EP approximations, mean (top) and covariance (bottom).}
