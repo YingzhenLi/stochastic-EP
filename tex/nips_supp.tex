@@ -55,9 +55,9 @@ Cambridge, CB2 1PZ, UK \\
 
 \appendix
 
-\section{Further Theoretical Results}
+\section{Further theoretical tesults}
 We described the extensions of stochastic expectation propagation (SEP) in the main text, and we provide more details in this section.
-\subsection{Power EP and Alpha-EP}
+\subsection{Power EP and alpha-EP}
 The analysis of EP and variational inference (VI) relationships asks for an introduction of power EP (PEP). As a preparation let us consider the alpha-divergence first introduced in \cite{amari:ig1985}
 \begin{equation}
 D_{\alpha}(p(\bm{\theta}) || q(\bm{\theta})) = \frac{4}{1 - \alpha^2} 
@@ -206,7 +206,7 @@ which returns $\bm{\lambda}_q^{t+1} = \bm{\lambda}_0 + N \hat{\bm{s}}_n$ as well
 %\end{proof}
 
 %
-\subsection{SEP from a Global Approximation Perspective}
+\subsection{SEP from a global approximation perspective}
 We relate SEP to a global approximation algorithm though it is computed in a truely local way. This framework utilises alpha divergence but on the global posterior, and we motivate it by describing VI and SVI as divergence minimisation.
 %
 VI performs global optimisation on $KL(q(\bm{\theta})||p(\bm{\theta}|\mathcal{D}))$, and its stochastic version, SVI, can be interpreted as computing coordinate descent on $KL(q(\bm{\theta}) || p(\bm{\theta} | \{\bm{x}_n\}^N))$ with the $N$ replicates $\{\bm{x}_n\}^N$. Similarly, we state SEP as a stochastic global optimisation procedure, which computes an iterative procedure to minimise alpha-divergence $D_{\alpha}(p(\bm{\theta} | \{\bm{x}_n\}^N) || q(\bm{\theta}))$ with $\alpha = \mhyphen 1 + 2/N$. Indeed we can understand the inner-loop of AEP as PEP with power $1/N$ if considering $f(\bm{\theta})^N$ as the ``big factor'' to approximate the likelihood term of $\bm{x}_n$ raised to power $N$.
@@ -246,7 +246,7 @@ This fixed point theorem applies to stochastic PEP as well when $\alpha \neq -1$
 
 \end{figure}
 
-\section{Algorithmic Design Details}
+\section{Algorithmic design details}
 %
 \subsection{Comparing the distributed methods}
 We have shown in the main paper that a proper design of data partitioning improves SEP's approximation accuracy. This distributed algorithm is inspired the Distributed EP (DEP) algorithm \cite{gelman:dep}\cite{xu:sms} presented in Algorithm \ref{alg:dep}. DEP first partitions the dataset into $K$ disjoint pieces $\{ D_k = \{\bm{x}_i\}_{i=1}^{N_k} \}$ with $N = \sum_{i=1}^K N_k$, which is well-justified since the true posterior can also be derived as
@@ -347,7 +347,7 @@ It is also possible to have latent variables globally shared or shared in a data
 %\end{align}
 %So the local factor $f(\bm{h}_i)$ is always removed from the global approximation and has no effect on the tilted distribution. This even implies that we do not need to compute the higher moments of $\bm{h}_i$ except its contribution to $q(\bm{\theta})$. Those sufficient statistics are only required when performing EP inference, which is by considering the test data as the next incoming datapoint and proposing the same approximation structure. 
 
-\section{Further Experimental Results}
+\section{Further experimental results}
 
 We also provide the memory consumption details for experiments using probabilistic back-propagation (PBP) in Table \ref{tab:memory}. We observe substantial memory reductions by running SEP instead of EP, while still attaining similar accuracies. Especially for Year, which is a typical large-scale dataset both in the number of observations $N$ and the dimensionality $D$, SEP achieves tens of gigabytes savings. In fact we ran the test for EP using a machine with more than 100GB RAM, which reveals the incredibly huge memory requirement of full EP. 
 

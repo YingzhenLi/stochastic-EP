@@ -60,13 +60,13 @@ It is possible that there are more direct relationships between EP fixed points 
 %%
 %Averaged EP has also been proposed in \cite{barthelme:aep} but as a theoretical tool to study the convergence properties of normal EP. The authors showed that averaged EP can be interpreted as Newton methods in large data limit and proved the convergence chain EP $\rightarrow$ AEP $\rightarrow$ Newton in that case. However the results are very restrictive as it requires log-concave and very slow changing likelihood functions. 
 
-\subsection{Stochastic Power EP: Relationships to Variational Methods}
+\subsection{Stochastic Power EP: Relationships to variational methods}
 %
 %NEED A PASS-THROUGH AGAIN
 %<<<<<<< HEAD
 The relationship between variational inference and stochastic variational inference \cite{hoffman:svi} mirrors the relationship between EP and SEP. 
 %
-Can these relationships be made more formal? If the moment projection step in EP is replaced by a natural parameter matching step then the resulting algorithm is equivalent to the Variational Message Passing (VMP) algorithm \cite{minka:divergence} (and see supplementary material). Moreover, VMP has the same fixed points as Variational Inference \cite{winn:vmp} (since minimising the local variational KL divergences is equivalent to minimising the global variational KL). 
+Can these relationships be made more formal? If the moment projection step in EP is replaced by a natural parameter matching step then the resulting algorithm is equivalent to the Variational Message Passing (VMP) algorithm \cite{minka:divergence} (and see supplementary material). Moreover, VMP has the same fixed points as variational inference \cite{winn:vmp} (since minimising the local variational KL divergences is equivalent to minimising the global variational KL). 
 
 
 %, that minimises $\mathrm{KL}(\tilde{p}_m(\bm{\theta}) ||q(\bm{\theta}))$, is replaced by the variational projection

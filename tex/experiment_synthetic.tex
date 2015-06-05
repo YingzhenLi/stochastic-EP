@@ -43,7 +43,9 @@ Finally, we tested SEP's performance on six small binary classification datasets
 
 \begin{table} 
 \small
-\centering \label{tab:probit_results} \begin{tabular}{l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}
+\centering \label{tab:probit_results} 
+ \caption{ Average test results all methods on Probit regression. All methods capture a good posterior mean, however EP outperforms ADF in terms of test log-likelihood on almost all the datasets, with SEP performing similarly to EP.}
+\begin{tabular}{l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}
 	l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}}\hline 
 {} & \multicolumn{6}{c}{RMSE} & \multicolumn{6}{c}{test log-likelihood} \\
 \bf{Dataset}&\multicolumn{2}{c}{\bf{ ADF }}&\multicolumn{2}{c}{\bf{ SEP }}&\multicolumn{2}{c}{\bf{ EP }} &\multicolumn{2}{c}{\bf{ ADF }}&\multicolumn{2}{c}{\bf{ SEP }}&\multicolumn{2}{c}{\bf{ EP }} \\ \hline 
@@ -66,12 +68,11 @@ Pima&0.242&0.0093&0.244&0.0098&\bf{0.241}&\bf{0.0093}
 Sonar&\bf{0.198}&\bf{0.0208}&0.198&0.0217&0.198&0.0243
 	&-0.461&0.053&-0.418&0.021&\bf{-0.415}&\bf{0.021}\\
  \hline \end{tabular} 
- \caption{ Average test results all methods on Probit regression. All methods capture a good posterior mean, however EP outperforms ADF in terms of test log-likelihood on almost all the datasets, with SEP performing similarly to EP.}
  \end{table} 
  
  %
 %%%% FIRST EXAMPLE %%%%
-\subsection{Mixture of Gaussians for Clustering}
+\subsection{Mixture of Gaussians for clustering}
 %
 The small scale experiments on probit regression indicate that SEP performs well for fully-observed probabilistic models. Although it is not the main focus of the paper, we sought to test the flexibility of the method by applying it to a latent variable model, specifically a Mixture of Gaussians. A synthetic MoGs dataset containing $N=200$ datapoints was constructed comprising $J=4$ Gaussians. The means were sampled from a Gaussian distribution, $p(\bm{\mu}_j)= \mathcal{N}(\bm{\mu}; \bm{m}, \mathrm{I})$, the cluster identity variables were sampled from a uniform categorical distribution $p(\bm{h}_n = j) = 1/4$, and each mixture component was isotropic $p(\bm{x}_n | \bm{h}_n) = \mathcal{N}(\bm{x}_n; \bm{\mu}_{\bm{h}_n}, 0.5^2 I)$. EP, ADF and SEP were performed to approximate the joint posterior over the cluster means $\{ \bm{\mu}_j\}$ and cluster identity variables $\{ \bm{h}_n \}$ (the other parameters were assumed known). 
 
