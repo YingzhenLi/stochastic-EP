@@ -1,0 +1,151 @@
+\begin{thebibliography}{10}
+
+\bibitem{ahn:distributedMCMC}
+Sungjin Ahn, Babak Shahbaba, and Max Welling.
+\newblock Distributed stochastic gradient mcmc.
+\newblock In {\em Proceedings of the 31st International Conference on Machine
+  Learning (ICML-14)}, pages 1044--1052, 2014.
+
+\bibitem{bardenet:MCMC}
+R{\'e}mi Bardenet, Arnaud Doucet, and Chris Holmes.
+\newblock Towards scaling up markov chain monte carlo: an adaptive subsampling
+  approach.
+\newblock In {\em Proceedings of the 31st International Conference on Machine
+  Learning (ICML-14)}, pages 405--413, 2014.
+
+\bibitem{hoffman:svi}
+Matthew~D. Hoffman, David~M. Blei, Chong Wang, and John~William Paisley.
+\newblock Stochastic variational inference.
+\newblock {\em Journal of Machine Learning Research}, 14(1):1303--1347, 2013.
+
+\bibitem{miguel:pbp}
+J.~M. Hernández-Lobato and Ryan~P. Adams.
+\newblock Probabilistic backpropagation for scalable learning of bayesian
+  neural networks.
+\newblock {\em arXiv:1502.05336}, 2015.
+
+\bibitem{gelman:dep}
+Andrew Gelman, Aki Vehtari, Pasi Jylänki, Christian Robert, Nicolas Chopin,
+  and John~P. Cunningham.
+\newblock Expectation propagation as a way of life.
+\newblock {\em arXiv:1412.4869}, 2014.
+
+\bibitem{xu:sms}
+Minjie Xu, Balaji Lakshminarayanan, Yee~Whye Teh, Jun Zhu, and Bo~Zhang.
+\newblock Distributed bayesian posterior sampling via moment sharing.
+\newblock In {\em NIPS}, 2014.
+
+\bibitem{minka:ep}
+T.P. Minka.
+\newblock {Expectation propagation for approximate Bayesian inference}.
+\newblock In {\em Uncertainty in Artificial Intelligence}, volume~17, pages
+  362--369, 2001.
+
+\bibitem{opper:ec}
+Manfred Opper and Ole Winther.
+\newblock Expectation consistent approximate inference.
+\newblock {\em The Journal of Machine Learning Research}, 6:2177--2204, 2005.
+
+\bibitem{kuss:gpep}
+Malte Kuss and Carl~Edward Rasmussen.
+\newblock Assessing approximate inference for binary gaussian process
+  classification.
+\newblock {\em The Journal of Machine Learning Research}, 6:1679--1704, 2005.
+
+\bibitem{barthelme:ep_likelihood}
+Simon Barthelm{\'e} and Nicolas Chopin.
+\newblock Expectation propagation for likelihood-free inference.
+\newblock {\em Journal of the American Statistical Association},
+  109(505):315--333, 2014.
+
+\bibitem{cunningham:gaussianEP}
+John~P Cunningham, Philipp Hennig, and Simon Lacoste-Julien.
+\newblock Gaussian probabilities and expectation propagation.
+\newblock {\em arXiv preprint arXiv:1111.6832}, 2011.
+
+\bibitem{minka:powerep}
+T.P. Minka.
+\newblock {Power EP}.
+\newblock Technical Report MSR-TR-2004-149, Microsoft Research, Cambridge,
+  2004.
+
+\bibitem{winn:vmp}
+John~M Winn and Christopher~M Bishop.
+\newblock Variational message passing.
+\newblock In {\em Journal of Machine Learning Research}, pages 661--694, 2005.
+
+\bibitem{jordan:variational}
+Michael~I Jordan, Zoubin Ghahramani, Tommi~S Jaakkola, and Lawrence~K Saul.
+\newblock An introduction to variational methods for graphical models.
+\newblock {\em Machine learning}, 37(2):183--233, 1999.
+
+\bibitem{beal:variational}
+Matthew~James Beal.
+\newblock {\em Variational algorithms for approximate Bayesian inference}.
+\newblock PhD thesis, University of London, 2003.
+
+\bibitem{turner+sahani:2011a}
+R.~E. Turner and M.~Sahani.
+\newblock Two problems with variational expectation maximisation for
+  time-series models.
+\newblock In D.~Barber, T.~Cemgil, and S.~Chiappa, editors, {\em Bayesian Time
+  series models}, chapter~5, pages 109--130. Cambridge University Press, 2011.
+
+\bibitem{turner+sahani:2011c}
+Richard~E. Turner and Maneesh Sahani.
+\newblock Probabilistic amplitude and frequency demodulation.
+\newblock In J.~Shawe-Taylor, R.S. Zemel, P.~Bartlett, F.C.N. Pereira, and K.Q.
+  Weinberger, editors, {\em Advances in Neural Information Processing Systems
+  24}, pages 981--989. 2011.
+
+\bibitem{herbrich:trueskill}
+Ralf Herbrich, Tom Minka, and Thore Graepel.
+\newblock Trueskill™: A bayesian skill rating system.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  569--576, 2006.
+
+\bibitem{maybeck:adf}
+Peter~S. Maybeck.
+\newblock {\em Stochastic models, estimation and control}.
+\newblock Academic Press, 1982.
+
+\bibitem{qi+minka:sparseGP}
+Yuan Qi, Ahmed~H Abdel-Gawad, and Thomas~P Minka.
+\newblock Sparse-posterior gaussian processes for general likelihoods.
+\newblock In {\em Uncertainty and Artificial Intelligence (UAI)}, 2010.
+
+\bibitem{amari:ig}
+Shun-ichi Amari and Hiroshi Nagaoka.
+\newblock {\em Methods of information geometry}, volume 191.
+\newblock Oxford University Press, 2000.
+
+\bibitem{barthelme:aep}
+Guillaume Dehaene and Simon Barthelm\'e.
+\newblock Expectation propagation in the large-data limit.
+\newblock {\em arXiv:1503.08060}, 2015.
+
+\bibitem{minka:divergence}
+Thomas Minka.
+\newblock Divergence measures and message passing.
+\newblock Technical Report MSR-TR-2005-173, Microsoft Research, Cambridge,
+  2005.
+
+\bibitem{amari:ig1985}
+Shun-ichi Amari.
+\newblock {\em Differential-Geometrical Methods in Statistic}.
+\newblock Springer, 1985.
+
+\bibitem{hoffman:nuts}
+Matthew~D Hoffman and Andrew Gelman.
+\newblock The no-u-turn sampler: Adaptively setting path lengths in hamiltonian
+  monte carlo.
+\newblock {\em The Journal of Machine Learning Research}, 15(1):1593--1623,
+  2014.
+
+\bibitem{hernandez2015probabilistic}
+Jos{\'e}~Miguel Hern{\'a}ndez-Lobato and Ryan~P Adams.
+\newblock Probabilistic backpropagation for scalable learning of bayesian
+  neural networks.
+\newblock {\em arXiv preprint arXiv:1502.05336}, 2015.
+
+\end{thebibliography}
