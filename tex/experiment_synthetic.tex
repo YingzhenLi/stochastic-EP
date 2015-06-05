@@ -5,7 +5,7 @@
 The purpose of the experiments was to evaluate SEP on a number of datasets (synthetic and real-world, small and large) and on a number of models (probit regression, Mixture of Gaussians and Bayesian neural networks).
 
 %%%% SECOND EXAMPLE %%%%
-\subsection{Bayesian Probit Regression}
+\subsection{Bayesian probit regression}
 %
 The first experiments considered a simple Bayesian classification problem and investigated the stability and quality of SEP in relation to EP and ADF as well as the effect of using mini-batches and varying the granularity of the approximation. The model comprised a probit likelihood function $P(\bm{y}_n = 1|\theta) = \Phi(\bm{\theta}^T \bm{x}_n)$ and a Gaussian prior over the hyper-plane parameter  $p(\bm{\theta}) = \mathcal{N}(\bm{\theta}; \bm{0}, \gamma I)$.  
 
@@ -38,7 +38,7 @@ Finally, we tested SEP's performance on six small binary classification datasets
 \def\svgwidth{0.31\linewidth}
 \subfigure[\label{fig:mnist}]{
 \input{fig/mnist_error.pdf_tex}}
-\caption{Bayesian logistic regression experiments. Panels (a) and (b) show synthetic data experiments. Panel (c) shows the results on MNIST (see text for full details)}
+\caption{Bayesian logistic regression experiments. Panels (a) and (b) show synthetic data experiments. Panel (c) shows the results on MNIST (see text for full details).}
 \end{figure}
 
 \begin{table} 

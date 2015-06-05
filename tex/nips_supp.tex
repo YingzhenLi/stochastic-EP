@@ -116,7 +116,7 @@ We first briefly sketch the VMP algorithm using EP framework but replacing the m
 %
 $\bm{\lambda}_q^t \buildrel\triangle\over = \bm{\lambda}_0 + \sum_{n=1}^N \bm{\lambda}_n^t$.
 %
-Here $\bm{\lambda}_0$ represent the natural parameter of the prior distribution $p_0(\bm{\theta})$ \footnote{This notation implicitly assumes that the prior also belongs to the approximate distribution family $\mathcal{Q}$. In general this does not have to be the case, however we can propose another factor to approximate $p_0(\bm{\theta})$, and our result still applies.}. VMP iteratively computes the update of each local estimate $\bm{\lambda}_n^{t+1}$ in the following procedure. First VMP computes the expected sufficient statistics $\hat{\bm{s}}_n$ about datapoint $\bm{x}_n$ using $\bm{\lambda}_q^t$, then forms the gradient as though optimising the maximised evidence lower bound (ELBO) but with $q_{-1}(\bm{\theta})$ as the prior:
+Here $\bm{\lambda}_0$ represents the natural parameter of the prior distribution $p_0(\bm{\theta})$ \footnote{This notation implicitly assumes that the prior also belongs to the approximate distribution family $\mathcal{Q}$. In general this does not have to be the case, however we can propose another factor to approximate $p_0(\bm{\theta})$, and our result still applies.}. VMP iteratively computes the update of each local estimate $\bm{\lambda}_n^{t+1}$ in the following procedure. First VMP computes the expected sufficient statistics $\hat{\bm{s}}_n$ about datapoint $\bm{x}_n$ using $\bm{\lambda}_q^t$, then forms the gradient as though optimising the maximised evidence lower bound (ELBO) but with $q_{-1}(\bm{\theta})$ as the prior:
 \begin{align}
 \nabla_{\bm{\lambda}_q} \mathcal{L} &= \bm{\lambda}_{-1}^t + \hat{\bm{s}}_n - \bm{\lambda}_q, \\
 \bm{\lambda}_{-1}^t &= \bm{\lambda}_q^t - \bm{\lambda}_{n}^t.
@@ -249,13 +249,13 @@ This fixed point theorem applies to stochastic PEP as well when $\alpha \neq -1$
 \section{Algorithmic design details}
 %
 \subsection{Comparing the distributed methods}
-We have shown in the main paper that a proper design of data partitioning improves SEP's approximation accuracy. This distributed algorithm is inspired the Distributed EP (DEP) algorithm \cite{gelman:dep}\cite{xu:sms} presented in Algorithm \ref{alg:dep}. DEP first partitions the dataset into $K$ disjoint pieces $\{ D_k = \{\bm{x}_i\}_{i=1}^{N_k} \}$ with $N = \sum_{i=1}^K N_k$, which is well-justified since the true posterior can also be derived as
+We have shown in the main paper that a proper design of data partitioning improves SEP's approximation accuracy. This distributed algorithm is inspired by the Distributed EP (DEP) algorithm \cite{gelman:dep}\cite{xu:sms} presented in Algorithm \ref{alg:dep}. DEP first partitions the dataset into $K$ disjoint pieces $\{ D_k = \{\bm{x}_i\}_{i=1}^{N_k} \}$ with $N = \sum_{i=1}^K N_k$, which is well-justified since the true posterior can also be derived as
 \begin{align}
 p(\bm{\theta}|\mathcal{D}) &\propto p_0(\bm{\theta}) \prod_{k=1}^K p(\mathcal{D}_k|\bm{\theta}), \\
 p(\mathcal{D}_k|\bm{\theta}) &= \prod_{\bm{x}_n \in \mathcal{D}_k} p(\bm{x}_n | \bm{\theta}).
 \end{align}
 %
-Next DEP assigns factors to each sub-datasets likelihood, i.e.~$q(\bm{\theta}) \propto p_0(\bm{\theta}) \prod_k f_k(\bm{\theta})$ with each $f_k(\bm{\theta})$ approximating $p(\mathcal{D}_k|\bm{\theta})$. The projection step is no longer analytically tractable, as the posterior with multiple datapoints lacks a simple form in general. Instead DEP computes moment matching by sampling methods, making it stochastic in the sense of moment approximation. 
+Next DEP assigns factors to each sub-datasets likelihood, i.e.~$q(\bm{\theta}) \propto p_0(\bm{\theta}) \prod_k f_k(\bm{\theta})$ with each $f_k(\bm{\theta})$ approximating $p(\mathcal{D}_k|\bm{\theta})$. The projection step is no longer analytically tractable, as the tilted distribution with multiple datapoints lacks a simple form in general. Instead DEP computes moment matching by sampling methods, making it stochastic in the sense of moment approximation. 
 
 %
 To have a deterministic counterpart of DEP, we consider SEP/AEP inside each partition. We name this approach as Distributed SEP/AEP (DSEP/DAEP) and provide a comparison in Fig. \ref{fig:dep_sep_dsep} with DEP and SEP using sampling protocol. Different from DEP, the approximate posterior for DSEP is defined as $q(\bm{\theta}) \propto p_0(\bm{\theta}) \prod_k f_k(\bm{\theta})^{N_k}$, with $f_k(\bm{\theta})^{N_k}$ approximating $p(\mathcal{D}_k|\bm{\theta})$. The computations are almost the same as SEP/AEP except that the updates only modifies the copies of the corresponded subset.
@@ -330,15 +330,15 @@ In other words, SEP uses $f(\bm{\theta}) g_n(\bm{h}_n)$ to approximate $p(\bm{x}
 
 Next we show a critical advantage of SEP on approximating latent variable posterior: the local factors $g_n(\bm{h}_n)$ do not need to be maintained in memory since the true posterior factorises over data-points. 
 %
-More formally, the cavity distribution is $q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) = q(\bm{\theta}, \{ \bm{h}_n\})/(f(\bm{\theta}) g_n(\bm{h}_n)) $ and the tilted distribution is $\tilde{p}_n(\bm{\theta}, \{ \bm{h}_n\}) = q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n)$. This leads to the a moment-update that minimises 
+More formally, the cavity distribution is $q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) \propto q(\bm{\theta}, \{ \bm{h}_n\})/(f(\bm{\theta}) g_n(\bm{h}_n)) $ and the tilted distribution is $\tilde{p}_n(\bm{\theta}, \{ \bm{h}_n\}) \propto q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n)$. This leads to the a moment-update that minimises 
 %
 \begin{equation}
 \mathrm{KL}[ p_0(\bm{\theta}) f(\bm{\theta})^{N-1} p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m) || p_0(\bm{\theta}) f(\bm{\theta})^{N-1} f'(\bm{\theta}) g_n(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m)] .\nonumber
 \end{equation}
 %
-with respect to $f'(\bm{\theta}) g_n(\bm{h}_n)$. Importantly, the terms involving $\prod_{m\ne n} g_m(\bm{h}_m)$ cancel meaning these factors do not need to be retained.
+with respect to $f'(\bm{\theta}) g_n(\bm{h}_n)$. Importantly, the terms involving $\prod_{m\ne n} g_m(\bm{h}_m)$ are cancelled, meaning that these factors do not need to be retained.
 
-It is also possible to have latent variables globally shared or shared in a data piece $\mathcal{D}_k$. But now we can extend SEP to these latent variables accordingly, which still provides computation gains in space complexity. In mathematical forms, assume $\bm{h}_k$ a latent variable shared in $\mathcal{D}_k$. Then we construct $N_k$ copies $g_k(\bm{h}_k)^{N_k}$ to approximate its posterior. This procedure still reduces memory by a factor of $\bar{N}_k = \frac{1}{K} \sum_k N_k$.
+It is also possible to have latent variables globally shared or shared in a data piece $\mathcal{D}_k$. But now we can extend SEP to these latent variables accordingly, which still provides computation gains in space complexity. In mathematical forms, assume $\bm{h}_k$ a latent variable shared in $\mathcal{D}_k$. Then we construct $q(\bm{h}_k) \propto p_0(\bm{h}_k) g_k(\bm{h}_k)^{N_k}$ to approximate its posterior. This procedure still reduces memory by a factor of $N-K$.
 
 %More formally we write the cavity distribution and tilted distribution computed in this scenario and assume we select $\bm{x}_i$ as the current datapoint:
 %\begin{align}
