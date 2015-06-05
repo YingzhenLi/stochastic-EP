@@ -1,0 +1,37 @@
+\begin{thebibliography}{1}
+
+\bibitem{amari:ig1985}
+Shun-ichi Amari.
+\newblock {\em Differential-Geometrical Methods in Statistic}.
+\newblock Springer, 1985.
+
+\bibitem{minka:powerep}
+T.P. Minka.
+\newblock {Power EP}.
+\newblock Technical Report MSR-TR-2004-149, Microsoft Research, Cambridge,
+  2004.
+
+\bibitem{amari:alpha_proj}
+Shun-ichi Amari, Shiro Ikeda, and Hidetoshi Shimokawa.
+\newblock Information geometry of $\alpha$-projection in mean field
+  approximation.
+\newblock {\em Advanced Mean Field Methods}, pages 241--257, 2001.
+
+\bibitem{mandt:smoothedSVI}
+Stephan Mandt and David Blei.
+\newblock Smoothed gradients for stochastic variational inference.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  2438--2446, 2014.
+
+\bibitem{gelman:dep}
+Andrew Gelman, Aki Vehtari, Pasi Jylänki, Christian Robert, Nicolas Chopin,
+  and John~P. Cunningham.
+\newblock Expectation propagation as a way of life.
+\newblock {\em arXiv:1412.4869}, 2014.
+
+\bibitem{xu:sms}
+Minjie Xu, Balaji Lakshminarayanan, Yee~Whye Teh, Jun Zhu, and Bo~Zhang.
+\newblock Distributed bayesian posterior sampling via moment sharing.
+\newblock In {\em NIPS}, 2014.
+
+\end{thebibliography}
