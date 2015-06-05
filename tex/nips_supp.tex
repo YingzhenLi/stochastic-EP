@@ -248,17 +248,21 @@ This fixed point theorem applies to stochastic PEP as well when $\alpha \neq -1$
 
 \end{figure}
 
-\section{Algorithmic Design Details: Comparing the distributed methods}
+\section{Algorithmic Design Details}
+%
+\subsection{Comparing the distributed methods}
 We have shown in the main paper that a proper design of data partitioning improves SEP's approximation accuracy. This distributed algorithm is inspired by practices involving sampling. The Distributed EP (DEP) algorithm \cite{gelman:dep}\cite{xu:sms} presented in Algorithm \ref{alg:dep} first partitions the dataset into $K$ disjoint pieces $\{ D_k = \{\bm{x}_i\}_{i=1}^{N_k} \}$ with $N = \sum_{i=1}^K N_k$, which is well-justified since the true posterior can also be derived as
 \begin{align}
 p(\bm{\theta}|\mathcal{D}) &\propto p_0(\bm{\theta}) \prod_{k=1}^K p(\mathcal{D}_k|\bm{\theta}), \\
 p(\mathcal{D}_k|\bm{\theta}) &= \prod_{\bm{x}_n \in \mathcal{D}_k} p(\bm{x}_n | \bm{\theta}).
 \end{align}
 %
-Next DEP assigns factors to each sub-datasets likelihood, i.e.~$q(\bm{\theta}) \propto p_0(\bm{\theta}) f_k(\bm{\theta})$ with each $f_k(\bm{\theta})$ approximating $p(\mathcal{D}_k|\bm{\theta})$. The projection step is no longer analytically tractable, as the posterior with multiple datapoints lacks a closed form in general. Instead DEP computes moment matching by sampling methods, making DEP stochastic in the sense of moment approximation. 
+Next DEP assigns factors to each sub-datasets likelihood, i.e.~$q(\bm{\theta}) \propto p_0(\bm{\theta}) \prod_k f_k(\bm{\theta})$ with each $f_k(\bm{\theta})$ approximating $p(\mathcal{D}_k|\bm{\theta})$. The projection step is no longer analytically tractable, as the posterior with multiple datapoints lacks a closed form in general. Instead DEP computes moment matching by sampling methods, making DEP stochastic in the sense of moment approximation. 
 
 %
-To have a deterministic counterpart for DEP, we consider SEP/AEP inside each partition. We name this approach as Distributed SEP/AEP (DSEP/DAEP) and provide a comparison in Fig. \ref{fig:dep_sep_dsep} with DEP and SEP using sampling protocol. The two algorithms are also detailed in Algorithm \ref{alg:dsep} and \ref{alg:daep}, respectively. Unlike SEP, we remove a fraction of the current factor $f_k(\bm{\theta})$ with power $1/N_k$, which leaves the cavity distribution $q_{-1}(\bm{\theta})$ approximately containing $N-1$ approximation terms. Like SEP, this guarantees the correct estimation of uncertainty level as SEP corrects ADF's overfitting. 
+To have a deterministic counterpart for DEP, we consider SEP/AEP inside each partition. We name this approach as Distributed SEP/AEP (DSEP/DAEP) and provide a comparison in Fig. \ref{fig:dep_sep_dsep} with DEP and SEP using sampling protocol. Different from DEP, the approximate posterior for DSEP is define as $q(\bm{\theta}) \propto p_0(\bm{\theta}) \prod_k f_k(\bm{\theta})^{N_k}$. The computations are almost the same as SEP/AEP except that the updates only modifies the copies of the corresponded subset.
+%
+The two algorithms are also detailed in Algorithm \ref{alg:dsep} and \ref{alg:daep}, respectively. Like SEP, this guarantees the correct estimation of uncertainty level as SEP corrects ADF's overfitting. 
 
 
 \begin{figure}[!t]
@@ -283,7 +287,7 @@ To have a deterministic counterpart for DEP, we consider SEP/AEP inside each par
 \caption{DSEP} \small
 \label{alg:dsep} 
 \begin{algorithmic}[1] 
-	\STATE compute cavity distribution \\$q_{-1}(\bm{\theta}) = q(\bm{\theta}) / f_k(\bm{\theta})^{1 / N_k}$
+	\STATE compute cavity distribution \\$q_{-1}(\bm{\theta}) = q(\bm{\theta}) / f_k(\bm{\theta})$
 	\STATE choose a datapoint $\bm{x}_n \sim \mathcal{D}_k$
 	\STATE compute tilted distribution \\$\tilde{p}_k^n(\bm{\theta}) \propto p(\bm{x}_n|\bm{\theta}) q_{-1}(\bm{\theta})$
 	\STATE moment matching: \\ \hspace{-1mm}$f_k^n(\bm{\theta}) \leftarrow \mathtt{proj}[\tilde{p}_k^n(\bm{\theta})] / q_{-1}(\bm{\theta}) $
@@ -300,17 +304,49 @@ To have a deterministic counterpart for DEP, we consider SEP/AEP inside each par
 \begin{algorithmic}[1] 
 %\STATE initialize $\{\tilde{f}_a\}$
 
-	\STATE compute cavity distribution \\ $q_{-1}(\bm{\theta}) \propto q(\bm{\theta}) / f_k(\bm{\theta})^{1 / N_k}$
+	\STATE compute cavity distribution \\ $q_{-1}(\bm{\theta}) \propto q(\bm{\theta}) / f_k(\bm{\theta})$
 	\STATE for each $\bm{x}_n \in \mathcal{D}_k$:
 	\STATE \quad compute tilted distribution \\$\tilde{p}_k^n(\bm{\theta}) \propto p(\bm{x}_n|\bm{\theta}) q_{-1}(\bm{\theta})$
 	\STATE \quad moment matching: \\\hspace{-1mm}$f_k^n(\bm{\theta}) \leftarrow \mathtt{proj}[\tilde{p}_k^n(\bm{\theta})] / q_{-1}(\bm{\theta}) $
-	\STATE inclusion:\\ $f_k(\bm{\theta}) \leftarrow \prod_n f_k^n(\bm{\theta})$
+	\STATE inclusion:\\ $f_k(\bm{\theta})^{N_k} \leftarrow \prod_n f_k^n(\bm{\theta})$
 \end{algorithmic}
 \end{algorithm}
 \end{minipage} 
 %
-\caption{Comparing the variants of distributed design for Expectation Propagation (EP). Distributed EP (DEP) uses sampling methods to compute the projection step, while Distributed SEP/AEP (DSEP/DAEP) still keeps deterministic computations.}
+\caption{Comparing the variants of distributed design for Expectation Propagation (EP). One should notice that the definitions of $f_k(\bm{\theta})$ are different for DEP and DSEP/DAEP. Distributed EP (DEP) uses sampling methods to compute the projection step, while Distributed SEP/AEP (DSEP/DAEP) still keeps deterministic computations.}
 \end{figure}
+
+\subsection{SEP with latent variables}
+We briefly discussed the extension of SEP to latent variable models. In this section we show the applicability of SEP in this case without scaling the memory consumption with $N$.
+%
+We consider a model containing latent variables, $\bm{h}_n$, associated with each observation $p(\bm{x}_n, \bm{h}_n | \bm{\theta})$  that are drawn i.i.d.~from a prior $p_0(\bm{h}_n)$. SEP proposes approximations to the true posterior over parameters and hidden variables 
+\begin{equation}
+p(\bm{\theta}, \{ \bm{h}_n\} | \mathcal{D}) \propto p_0(\bm{\theta}) \prod_n p_0(\bm{h}_n) p(\bm{x}_n | \bm{h}_n, \bm{\theta})
+\end{equation}
+by tying the factors for the global parameter $\bm{\theta}$ but retaining the local factors for the hidden variables:
+%
+\begin{equation}
+q(\bm{\theta}, \{ \bm{h}_n\}) \buildrel\triangle\over = p_0(\bm{\theta}) f(\bm{\theta})^N \prod_{n=1}^N g_n(\bm{h}_n) .
+\end{equation}
+In other words, SEP uses $f(\bm{\theta}) g_n(\bm{h}_n)$ to approximate $p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n)$.
+
+Next we show a critical advantage of SEP on approximating latent variable posterior: the local factors $g_n(\bm{h}_n)$ do not need to be maintained in memory since the true posterior factorises over data-points. 
+%
+More formally, the cavity distribution is $q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) = q(\bm{\theta}, \{ \bm{h}_n\})/(f(\bm{\theta}) g_n(\bm{h}_n)) $ and the tilted distribution $\tilde{p}_n(\bm{\theta}, \{ \bm{h}_n\}) = q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n)$ which leads to the a moment-update that minimises 
+%
+\begin{equation}
+\mathrm{KL}[ p_0(\bm{\theta}) f(\bm{\theta})^{N-1} p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m) || p_0(\bm{\theta}) f(\bm{\theta})^{N-1} f'(\bm{\theta}) g_n(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m)] .\nonumber
+\end{equation}
+%
+with respect to $f'(\bm{\theta}) g_n(\bm{h}_n)$. Importantly, the terms involving $\prod_{m\ne n} g_m(\bm{h}_m)$ cancel meaning these factors do not need to be retained.
+
+
+%More formally we write the cavity distribution and tilted distribution computed in this scenario and assume we select $\bm{x}_i$ as the current datapoint:
+%\begin{align}
+%q_{-1}(\bm{\theta}, \bm{h}_i) &\propto  p_0(\bm{\theta}) f(\bm{\theta})^{N-1} p_0(\bm{h}_i), \\
+%\tilde{p}_i(\bm{\theta}, \bm{h}_i) &\propto p_0(\bm{\theta}) f(\bm{\theta})^{N-1} p_0(\bm{h}_i) p(\bm{x}_i, \bm{h}_i | \bm{\theta}).
+%\end{align}
+%So the local factor $f(\bm{h}_i)$ is always removed from the global approximation and has no effect on the tilted distribution. This even implies that we do not need to compute the higher moments of $\bm{h}_i$ except its contribution to $q(\bm{\theta})$. Those sufficient statistics are only required when performing EP inference, which is by considering the test data as the next incoming datapoint and proposing the same approximation structure. It is also possible to have the latent variables globally shared or shared in a local cluster, and the posterior approximations for them contain more than one copy of the factors. But now we can extend SEP to these latent variables accordingly, which still provides computation gains in space complexity.
 
 \section{Further Experimental Results}
 
