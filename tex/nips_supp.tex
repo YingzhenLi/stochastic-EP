@@ -114,7 +114,7 @@ We first briefly sketch the VMP algorithm using EP framework but replacing the m
 %
 $\bm{\lambda}_q^t \buildrel\triangle\over = \bm{\lambda}_0 + \sum_{n=1}^N \bm{\lambda}_n^t$.
 %
-Here $\bm{\lambda}_0$ represent the natural parameter of the prior distribution $p_0(\bm{\theta})$ \footnote{This notation implicitly assumes that the prior also belongs to the approximate distribution family $\mathcal{Q}$. In general this does not have to be the case, however we can propose another factor to approximate $p_0(\bm{\theta})$, and our result still apples.}. VMP iteratively compute the update of each local estimate $\bm{\lambda}_n^{t+1}$ in following procedure: first VMP computes the expected sufficient statistics $\hat{\bm{s}}_n$ about datapoint $\bm{x}_n$ using $\bm{\lambda}_q^t$, then forms the gradient as though optimising the maximised evidence lower bound (ELBO) but with $q_{-1}(\bm{\theta})$ as the prior:
+Here $\bm{\lambda}_0$ represent the natural parameter of the prior distribution $p_0(\bm{\theta})$ \footnote{This notation implicitly assumes that the prior also belongs to the approximate distribution family $\mathcal{Q}$. In general this does not have to be the case, however we can propose another factor to approximate $p_0(\bm{\theta})$, and our result still applies.}. VMP iteratively compute the update of each local estimate $\bm{\lambda}_n^{t+1}$ in following procedure: first VMP computes the expected sufficient statistics $\hat{\bm{s}}_n$ about datapoint $\bm{x}_n$ using $\bm{\lambda}_q^t$, then forms the gradient as though optimising the maximised evidence lower bound (ELBO) but with $q_{-1}(\bm{\theta})$ as the prior:
 \begin{align}
 \nabla_{\bm{\lambda}_q} \mathcal{L} &= \bm{\lambda}_{-1}^t + \hat{\bm{s}}_n - \bm{\lambda}_q, \\
 \bm{\lambda}_{-1}^t &= \bm{\lambda}_q^t - \bm{\lambda}_{n}^t.
@@ -207,9 +207,9 @@ which returns $\bm{\lambda}_q^{t+1} = \bm{\lambda}_0 + N \hat{\bm{s}}_n$. This i
 \subsection{SEP from a Global Approximation Perspective}
 We relate SEP to a global approximation algorithm though it is computed in a truely local way. This framework utilises alpha divergence but on the global posterior, and we motivate it by describing VI and SVI as divergence minimisation.
 %
-VI performs global optimisation on $KL(q(\bm{\theta})||p(\bm{\theta}|\mathcal{D}))$, and its stochastic version, SVI, performs coordinate descent on $KL(q(\bm{\theta}) || p(\bm{\theta} | \{\bm{x}_n\}^N))$ with the $N$ replicates $\{\bm{x}_n\}^N$. Similarly, we state SEP as a stochastic global optimisation procedure, which minimises the $\alpha$-divergence $D_{\alpha}(p(\bm{\theta} | \{\bm{x}_n\}^N) || q(\bm{\theta}))$ with $\alpha = \mhyphen 1 + 2/N$. Indeed we can understand the inner-loop of AEP as PEP with power $\beta = 1/N$ if considering $f(\bm{\theta})^N$ as the ``big factor'' to approximate the likelihood term of $\bm{x}_n$ raised to power $N$.
+VI performs global optimisation on $KL(q(\bm{\theta})||p(\bm{\theta}|\mathcal{D}))$, and its stochastic version, SVI, performs coordinate descent on $KL(q(\bm{\theta}) || p(\bm{\theta} | \{\bm{x}_n\}^N))$ with the $N$ replicates $\{\bm{x}_n\}^N$. Similarly, we state SEP as a stochastic global optimisation procedure, which compute an iterative procedure to minimise alpha-divergence $D_{\alpha}(p(\bm{\theta} | \{\bm{x}_n\}^N) || q(\bm{\theta}))$ with $\alpha = \mhyphen 1 + 2/N$. Indeed we can understand the inner-loop of AEP as PEP with power $\beta = 1/N$ if considering $f(\bm{\theta})^N$ as the ``big factor'' to approximate the likelihood term of $\bm{x}_n$ raised to power $N$.
 
-However minimising the alpha-divergence between the true posterior $p(\bm{\theta}|\mathcal{D})$ and the global approximation $q(\bm{\theta})$ recovers PEP on the whole dataset instead, and the factor to include in the tilted distribution changes to the intractable geometric average $\mathtt{avg}[\{p(\bm{x}_n | \bm{\theta}) \}]$. Readers might have noticed that the update of PEP on full dataset is given by $q(\bm{\theta}) \leftarrow \mathtt{proj}[\mathtt{avg}[\{ \tilde{p}_n(\bm{\theta}) \}]]$. In other words, we can interpret AEP as an approximation to the impractical batch PEP by interchanging computations, and we illustrate a geometric view for this in Figure \ref{fig:aep_vs_pep}.
+However minimising the alpha-divergence between the true posterior $p(\bm{\theta}|\mathcal{D})$ and the global approximation $q(\bm{\theta})$ recovers PEP on the whole dataset instead, and the factor to include in the tilted distribution changes to the intractable geometric average $\mathtt{avg}[\{p(\bm{x}_n | \bm{\theta}) \}] \buildrel\triangle\over = [\prod_n p(\bm{x}_n | \bm{\theta}) ]^{1/N} $. Readers might have noticed that the update of PEP on full dataset is given by $q(\bm{\theta}) \leftarrow \mathtt{proj}[\mathtt{avg}[\{ \tilde{p}_n(\bm{\theta}) \}]]$. In other words, we can interpret AEP as an approximation to the impractical batch PEP by interchanging computations, and we illustrate a geometric view for this in Fig. \ref{fig:aep_vs_pep}.
 
 It is important to note that SEP/AEP in convergence does not minimise the alpha divergence globally. Like PEP, the inner-loop compute $\mathtt{proj}[\tilde{p}_n(\bm{\theta})]$, where one can show that it moves towards minimising $D_{\alpha}(p(\bm{\theta} | \{\bm{x}_n\}^N) || q_n(\bm{\theta}))$ using the same techniques as before. However the outer-loop averages the natural parameters of the intermediate answers, which breaks the optimisation in the inner-loop. Further local/global optimisation of alpha divergence are inconsistent in terms of fixed point except $\alpha = -1$, the divergence utilised in VI and VMP. Indeed we provide the fixed points conditions of AEP which shows its local approximation nature.
 %
@@ -225,6 +225,7 @@ These fixed points are also the fixed points of stochastic EP in expectation.
 In each update SEP gives the same answers as AEP in expectation if initialised at the same starting point. Also as an analogy to normal EP, the stationary points of AEP ask for moment matching between tilted and intermediate distributions. 
 \end{proof}
 %
+This fixed point theorem applies to stochastic PEP as well when $\alpha \neq -1$, and importantly it also implies the pathology of constructing stochastic PEP with $\alpha$ taking to the limit $-1$. 
 
 \begin{figure}
 \centering
@@ -232,15 +233,69 @@ In each update SEP gives the same answers as AEP in expectation if initialised a
 \subfigure[\label{fig:aep_vs_pep}]{
 \input{fig/aep_vs_pep.pdf_tex}}
 %
-\caption{(a) A geometric view of AEP/PEP comparison}
+\caption{A geometric view of AEP/PEP comparison.}
+\end{figure}
+
+\section{Algorithmic Design Details: Comparing the distributed methods}
+
+
+\begin{figure}[!t]
+% UGLY USE OF \vspace & \hspace follows
+\begin{minipage}[t]{0.33\linewidth}
+\centering
+\begin{algorithm}[H] 
+\caption{DEP} \small
+\label{alg:dep} 
+\begin{algorithmic}[1]
+	\STATE compute cavity distribution \\$q_{-k}(\bm{\theta}) \propto q(\bm{\theta}) / f_k(\bm{\theta})$ 
+	\STATE compute tilted distribution \\$\tilde{p}_k(\bm{\theta}) \propto p(\mathcal{D}_k|\bm{\theta}) q_{-k}(\bm{\theta})$
+	\STATE moment matching: \\ \hspace{-3mm}$f_k(\bm{\theta}) \leftarrow \mathtt{proj}[\tilde{p}_k(\bm{\theta})] / q_{-k}(\bm{\theta}) $ \\
+\hspace{1mm}\\ \vspace{1.5mm} \hspace{1mm}\\
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}
+%
+\begin{minipage}[t]{0.33\linewidth}
+\centering
+\begin{algorithm}[H] 
+\caption{DSEP} \small
+\label{alg:dsep} 
+\begin{algorithmic}[1] 
+	\STATE compute cavity distribution \\$q_{-1}(\bm{\theta}) = q(\bm{\theta}) / f_k(\bm{\theta})^{1 / N_k}$
+	\STATE choose a datapoint $\bm{x}_n \sim \mathcal{D}_k$
+	\STATE compute tilted distribution \\$\tilde{p}_k^n(\bm{\theta}) \propto p(\bm{x}_n|\bm{\theta}) q_{-1}(\bm{\theta})$
+	\STATE moment matching: \\ \hspace{-1mm}$f_k^n(\bm{\theta}) \leftarrow \mathtt{proj}[\tilde{p}_k^n(\bm{\theta})] / q_{-1}(\bm{\theta}) $
+	\STATE inclusion:\\ \hspace{-5mm} $f_k(\bm{\theta}) \leftarrow f_k(\bm{\theta})^{1 - 1/N_k} f_k^n(\bm{\theta})^{1/N_k}$
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}
+%\quad
+\begin{minipage}[t]{0.33\linewidth}
+\centering
+\begin{algorithm}[H]
+\caption{DAEP} \small
+\label{alg:daep} 
+\begin{algorithmic}[1] 
+%\STATE initialize $\{\tilde{f}_a\}$
+
+	\STATE compute cavity distribution \\ $q_{-1}(\bm{\theta}) \propto q(\bm{\theta}) / f_k(\bm{\theta})^{1 / N_k}$
+	\STATE for each $\bm{x}_n \in \mathcal{D}_k$:
+	\STATE \quad compute tilted distribution \\$\tilde{p}_k^n(\bm{\theta}) \propto p(\bm{x}_n|\bm{\theta}) q_{-1}(\bm{\theta})$
+	\STATE \quad moment matching: \\\hspace{-1mm}$f_k^n(\bm{\theta}) \leftarrow \mathtt{proj}[\tilde{p}_k^n(\bm{\theta})] / q_{-1}(\bm{\theta}) $
+	\STATE inclusion:\\ $f_k(\bm{\theta}) \leftarrow \prod_n f_k^n(\bm{\theta})$
+\end{algorithmic}
+\end{algorithm}
+\end{minipage} 
+%
+\caption{Comparing the variants of distributed design for Expectation Propagation (EP). Distributed EP (DEP) uses sampling methods to compute the projection step, while Distributed SEP/AEP (DSEP/DAEP) still keeps deterministic computations.}
 \end{figure}
 
 \section{Further Experimental Results}
-We further test the performance of SEP with sampling methods to compute moments \footnote{code adjusted from \texttt{ep-stan}: \url{https://github.com/gelman/ep-stan}}. We re-use the settings of probit regression but change the probit unit to sigmoid function, making the M-projection analytically intractable. We partition the dataset into $K = 20$ subsets $\{\mathcal{D}_k\}$ and consider the true posterior as
+We further test the performance of SEP with sampling methods to compute moments \footnote{code adjusted from \texttt{ep-stan}: \url{https://github.com/gelman/ep-stan}}. We re-use the settings of probit regression but change the probit unit to sigmoid function, making the moment projection analytically intractable. We partition the dataset into $K = 20$ subsets $\{\mathcal{D}_k\}$ and consider the true posterior as
 \begin{equation}
 p(\bm{\theta}|\mathcal{D}) \propto p_0(\bm{\theta}) \prod_{k=1}^K p(\mathcal{D}_k|\bm{\theta}).
 \end{equation}
-We construct the approximate posterior with local factors over the subsets and tied them in SEP/AEP as before. Again as presented in Figure \ref{fig:sep_logit}, SEP performs almost as well as EP, which further justifies SEP even with sampling methods. Also AEP is indistinguishable from DEP, but it reduces memory by a factor of $K$.
+We construct the approximate posterior with local factors over the subsets and tied them in SEP/AEP as before. Again as presented in Fig. \ref{fig:sep_logit}, SEP performs almost as well as EP, which further justifies SEP even with sampling methods. Also AEP is indistinguishable from DEP, but it reduces memory by a factor of $K$.
 
 \begin{figure}
 \centering
@@ -249,8 +304,27 @@ We construct the approximate posterior with local factors over the subsets and t
 \subfigure[\label{fig:sep_logit}]{
 \input{fig/sep_logit.pdf_tex}}
 %
-\caption{Performance of EP methods on Bayesian logistic regression, where we use probit function for (a)(b) and sigmoid function for (c).}
+\caption{Performance of EP methods on Bayesian logistic regression with sampling moment computations.}
 \end{figure}
+
+We also provide the memory consumption details for experiments using probabilistic back-propagation (PBP) in Table \ref{tab:memory}. We observe substantial memory reductions by running SEP instead of EP, while still attaining similar accuracies. Experientially for Year which is a typical large-scale dataset both in the number of observations $N$ and the dimensionality $D$, SEP achieves tens of gigabytes savings. In fact we perform the test for EP using a machine with more than 100GB RAM, which demonstrates the incredibly huge memory requirement of full EP. 
+
+\begin{table} 
+\begin{minipage}[!t]{0.6\linewidth}
+\small
+\centering 
+\begin{tabular}{lrrr}\hline \bf{Dataset}& $N$ & $d$ & MB reduction\\ \hline 
+Kin8nm & 8,192 & 8 & 58MB \\ 
+Naval & 11,934 & 16 & 147MB\\ 
+Power Plant & 9,568 & 4 & 37MB\\ 
+Protein & 45,730 & 9 & \bf{694MB}\\ 
+Wine & 1,599 & 11 & 14MB\\ 
+Year & 515,340 & 90 & \bf{65107MB}\\ \hline 
+\end{tabular} 
+\caption{ Memory reduction of SEP from full EP. } \label{tab:memory} 
+\end{minipage}
+\end{table} 
+
 
 \subsubsection*{References}
 \renewcommand{\section}[2]{}
