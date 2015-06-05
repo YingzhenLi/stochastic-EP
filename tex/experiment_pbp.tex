@@ -11,7 +11,7 @@ when the amount of available data is very large.
 
 We performed several experiments to asses the accuracy of different implementations of PBP
 based on ADF, SEP and EP. We considered neural networks with 100 hidden units and followed the same experimental protocol 
-as described by \cite{hernandez2015probabilistic}\todo[fancyline]{need to reference the datasets}.
+as described by \cite{miguel:pbp}%\todo[fancyline]{need to reference the datasets}.
 Table 2 shows the average test RMSE and test log-likelihood for each method.
 Interestingly, SEP and ADF often outperform EP in this case (although the results presented for ADF use a near-optimal number of sweeps and further iterations generally degrades performance). Finally, Table 3 shows the reduction in memory consumption when SEP is compared with EP.
 This reduction scales as a function of the dataset size and for the biggest
@@ -41,25 +41,25 @@ Wine&\bf{0.635}&\bf{0.0079}&0.650&0.0082&0.637&0.0076
 Year&\bf{8.879}&\bf{   NA}&8.922&   NA&8.914&   NA
 &\bf{-3.603}&\bf{  NA}&-3.924&  NA&-3.929&  NA\\
  \hline \end{tabular} 
-\caption{ Average test results all methods. } 
+\caption{Average test results for all methods. Datasets are also from the UCI machine learning repository.} 
  \end{table} 
 
 
-\begin{table} 
+%\begin{table} 
 %\begin{minipage}[!t]{0.6\linewidth}
-\small
-\centering 
-\begin{tabular}{lrrr}\hline \bf{Dataset}& $N$ & $d$ & MB reduction\\ \hline 
-Kin8nm & 8,192 & 8 & 58MB \\ 
-Naval & 11,934 & 16 & 147MB\\ 
-Power Plant & 9,568 & 4 & 37MB\\ 
-Protein & 45,730 & 9 & \bf{694MB}\\ 
-Wine & 1,599 & 11 & 14MB\\ 
-Year & 515,340 & 90 & \bf{65107MB}\\ \hline 
-\end{tabular} 
-\caption{ Memory reduction of SEP from full EP. } \label{tab:memory} 
+%\small
+%\centering 
+%\begin{tabular}{lrrr}\hline \bf{Dataset}& $N$ & $d$ & MB reduction\\ \hline 
+%Kin8nm & 8,192 & 8 & 58MB \\ 
+%Naval & 11,934 & 16 & 147MB\\ 
+%Power Plant & 9,568 & 4 & 37MB\\ 
+%Protein & 45,730 & 9 & \bf{694MB}\\ 
+%Wine & 1,599 & 11 & 14MB\\ 
+%Year & 515,340 & 90 & \bf{65107MB}\\ \hline 
+%\end{tabular} 
+%\caption{ Memory reduction of SEP from full EP. } \label{tab:memory} 
 %\end{minipage}
-\end{table} 
+%\end{table} 
 %
 %\begin{minipage}[!t]{0.35\linewidth}
 %\begin{figure}
