@@ -5,11 +5,74 @@ journal = {arXiv:1503.08060},
 year = {2015},
 }
 
+@incollection{turner+sahani:2011c,
+ title ={Probabilistic amplitude and frequency demodulation},
+ author={Richard E. Turner and Maneesh Sahani},
+ booktitle = {Advances in Neural Information Processing Systems 24},
+ editor = {J. Shawe-Taylor and R.S. Zemel and P. Bartlett and F.C.N. Pereira and K.Q. Weinberger},
+ pages = {981--989},
+ year = {2011},
+abstract = {A number of recent scientific and engineering problems require
+signals to be decomposed into a product of a slowly varying positive
+envelope and a quickly varying carrier whose instantaneous frequency
+also varies slowly over time. Although signal processing provides
+algorithms for so-called amplitude- and frequency-demodulation (AFD),
+there are well known problems with all of the existing
+methods. Motivated by the fact that AFD is ill-posed, we approach the
+problem using probabilistic inference. The new approach, called
+probabilistic amplitude and frequency demodulation (PAFD), models
+instantaneous frequency using an auto-regressive generalization of the
+von Mises distribution, and the envelopes using Gaussian
+auto-regressive dynamics with a positivity constraint. A novel form of
+expectation propagation is used for inference. We demonstrate that
+although PAFD is computationally demanding, it outperforms previous
+approaches on synthetic and real signals in clean, noisy and missing
+data settings.}
+}
+
 @article{gelman:dep,
 author = {Andrew Gelman and Aki Vehtari and Pasi Jylänki and Christian Robert and Nicolas Chopin and John P. Cunningham},
 title = {Expectation propagation as a way of life},
 journal = {arXiv:1412.4869},
 year = {2014},
+}
+
+@InCollection{turner+sahani:2011a,
+  author = 	 {R. E. Turner and M. Sahani},
+  title = 	 {Two problems with variational expectation
+                  maximisation for time-series models},
+  booktitle = 	 {Bayesian Time series models},
+  pages = 	 {109--130},
+  publisher = {Cambridge University Press},
+  year = 	 2011,
+  editor = 	 {D. Barber and T. Cemgil and S. Chiappa},
+  chapter = 	 5,
+  abstract ={Variational methods are a key component of the
+                  approximate inference and learning toolbox. These
+                  methods fill an important middle ground, retaining
+                  distributional information about uncertainty in
+                  latent variables, unlike maximum a posteriori
+                  methods (MAP), and yet generally requiring less
+                  computational time than Monte Carlo Markov Chain
+                  methods. In particular the variational Expectation
+                  Maximisation (vEM) and variational Bayes algorithms,
+                  both involving variational optimisation of a
+                  free-energy, are widely used in time-series
+                  modelling. Here, we investigate the success of vEM
+                  in simple probabilistic time-series models. First we
+                  consider the inference step of vEM, and show that a
+                  consequence of the well-known compactness property
+                  of variational inference is a failure to propagate
+                  uncertainty in time, thus limiting the usefulness of
+                  the retained distributional information. In
+                  particular, the uncertainty may appear to be
+                  smallest precisely when the approximation is
+                  poorest. Second, we consider parameter learning and
+                  analytically reveal systematic biases in the
+                  parameters found by vEM. Surprisingly, simpler
+                  variational approximations (such a mean-field) can
+                  lead to less bias than more complicated structured
+                  approximations.  }
 }
 
 @inproceedings{broderick:stream,

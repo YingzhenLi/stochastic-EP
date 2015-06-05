@@ -235,6 +235,26 @@ In each update SEP gives the same answers as AEP in expectation if initialised a
 \caption{(a) A geometric view of AEP/PEP comparison}
 \end{figure}
 
+\section{SEP with latent variables: why local factors do not need to be maintained}
+
+Recapitulating the setup in the main text: Consider a model containing hidden variables, $\bm{h}_n$, associated with each observation $p(\bm{x}_n, \bm{h}_n | \bm{\theta})$  that are drawn i.i.d.~from a prior $p_0(\bm{h}_n)$. The goal is to approximate the true posterior over parameters and hidden variables $p(\bm{\theta}, \{ \bm{h}_n\} | \mathcal{D}) \propto p_0(\bm{\theta}) \prod_n p_0(\bm{h}_n) p(\bm{x}_n | \bm{h}_n, \bm{\theta})$. 
+%
+Typically, EP would approximate the effect of each intractable term using a product of approximate factors, $p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n)  \approx f_n(\bm{\theta}) g_n(\bm{h}_n) $. Instead, SEP ties the approximate parameter factors $p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n)  \approx f(\bm{\theta}) g_n(\bm{h}_n) $ yielding:
+%
+\begin{equation}
+q(\bm{\theta}, \{ \bm{h}_n\}) \buildrel\triangle\over = p_0(\bm{\theta}) f(\bm{\theta})^N \prod_{n=1}^N g_n(\bm{h}_n) .
+\end{equation}
+%
+Fortunately the local factors $g_n(\bm{h}_n)$ do not need to be maintained in memory since the true posterior factorises over data-points. More formally, the cavity distribution is $q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) = q(\bm{\theta}, \{ \bm{h}_n\})/(f(\bm{\theta}) g_n(\bm{h}_n)) $ and the tilted distribution $\tilde{p}_n(\bm{\theta}, \{ \bm{h}_n\}) = q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n)$ which leads to the a moment-update that minimises 
+%
+\begin{equation}
+\mathrm{KL}[ p_0(\bm{\theta}) f(\bm{\theta})^{N-1} p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m) || p_0(\bm{\theta}) f(\bm{\theta})^{N-1} f'(\bm{\theta}) g_n(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m)] .\nonumber
+\end{equation}
+%
+with respect to $f'(\bm{\theta}) g_n(\bm{h}_n)$. Importantly, the terms involving $\prod_{m\ne n} g_m(\bm{h}_m)$ cancel meaning these factors do not need to be retained.
+
+
+
 \section{Further Experimental Results}
 We further test the performance of SEP with sampling methods to compute moments \footnote{code adjusted from \texttt{ep-stan}: \url{https://github.com/gelman/ep-stan}}. We re-use the settings of probit regression but change the probit unit to sigmoid function, making the M-projection analytically intractable. We partition the dataset into $K = 20$ subsets $\{\mathcal{D}_k\}$ and consider the true posterior as
 \begin{equation}
@@ -251,6 +271,25 @@ We construct the approximate posterior with local factors over the subsets and t
 %
 \caption{Performance of EP methods on Bayesian logistic regression, where we use probit function for (a)(b) and sigmoid function for (c).}
 \end{figure}
+
+\subsection{Memory usage for Probabilistic Back Propagation Experiments}
+
+\begin{table} 
+%\begin{minipage}[!t]{0.6\linewidth}
+\small
+\centering 
+\begin{tabular}{lrrr}\hline \bf{Dataset}& $N$ & $d$ & MB reduction\\ \hline 
+Kin8nm & 8,192 & 8 & 58MB \\ 
+Naval & 11,934 & 16 & 147MB\\ 
+Power Plant & 9,568 & 4 & 37MB\\ 
+Protein & 45,730 & 9 & \bf{694MB}\\ 
+Wine & 1,599 & 11 & 14MB\\ 
+Year & 515,340 & 90 & \bf{65107MB}\\ \hline 
+\end{tabular} 
+\caption{ Memory reduction of SEP from full EP. } \label{tab:memory} 
+%\end{minipage}
+\end{table} 
+
 
 \subsubsection*{References}
 \renewcommand{\section}[2]{}
