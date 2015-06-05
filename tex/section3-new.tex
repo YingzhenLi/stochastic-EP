@@ -7,7 +7,7 @@ SEP has been motivated from a practical perspective by the limitations inherent 
 %
 \subsection{Parallel SEP: Relating the EP fixed points to SEP}
 %
-The SEP algorithm outlined above approximates one likelihood at a time which can be computationally slow. However, it is simple to parallelise the SEP updates by following the same recipe by which EP is parallelised. Consider a minibatch comprising $M$ datapoints (for a full parallel (batch) update use $M=N$). First we form the cavity distribution for each likelihood. Unlike EP these are all identical. Next, in parallel, compute $M$ intermediate factors $f_m(\bm{\theta}) \leftarrow \mathtt{proj}[\tilde{p}_m(\bm{\theta})] / q_{-1}(\bm{\theta})$. In EP these intermediate factors become the new likelihood approximations and the approximation is updated to $q(\bm{\theta}) = p_0(\bm{\theta}) \prod_{n \ne m} f_n(\bm{\theta}) \prod_{m} f_m(\bm{\theta}) $. In SEP, the same update is used for the approximating distribution, which becomes $q(\bm{\theta}) = p_0(\bm{\theta}) f_{old}(\bm{\theta})^{N-M} \prod_{m} f_m(\bm{\theta}) $ and, by implication, the approximating factor is $f_{new}(\bm{\theta}) = f_{old}(\bm{\theta})^{1-M/N} \prod_{m=1}^M f_m(\bm{\theta})^{1/N}$. One way of understanding parallel SEP is as a double loop algorithm. The inner loop produces intermediate approximations  $q_m(\bm{\theta}) \leftarrow \arg\min_q \mathrm{KL}(\tilde{p}_m(\bm{\theta}) ||q(\bm{\theta})) \buildrel\triangle\over = \mathtt{proj}[\tilde{p}_m(\bm{\theta})]$ these are then combined in the outer loop \textbf{outer loop:} $q(\bm{\theta}) \leftarrow \arg\min_q \sum_{m=1}^M \mathrm{KL}(q(\bm{\theta}) ||q_m(\bm{\theta})) + \mathrm{KL}[q(\bm{\theta}) || q_{old}(\bm{\theta})]$.
+The SEP algorithm outlined above approximates one likelihood at a time which can be computationally slow. However, it is simple to parallelise the SEP updates by following the same recipe by which EP is parallelised. Consider a minibatch comprising $M$ datapoints (for a full parallel (batch) update use $M=N$). First we form the cavity distribution for each likelihood. Unlike EP these are all identical. Next, in parallel, compute $M$ intermediate factors $f_m(\bm{\theta}) \leftarrow \mathtt{proj}[\tilde{p}_m(\bm{\theta})] / q_{-1}(\bm{\theta})$. In EP these intermediate factors become the new likelihood approximations and the approximation is updated to $q(\bm{\theta}) = p_0(\bm{\theta}) \prod_{n \ne m} f_n(\bm{\theta}) \prod_{m} f_m(\bm{\theta}) $. In SEP, the same update is used for the approximating distribution, which becomes $q(\bm{\theta}) = p_0(\bm{\theta}) f_{old}(\bm{\theta})^{N-M} \prod_{m} f_m(\bm{\theta}) $ and, by implication, the approximating factor is $f_{new}(\bm{\theta}) = f_{old}(\bm{\theta})^{1-M/N} \prod_{m=1}^M f_m(\bm{\theta})^{1/N}$. One way of understanding parallel SEP is as a double loop algorithm. The \textbf{inner loop} produces intermediate approximations  $q_m(\bm{\theta}) \leftarrow \arg\min_q \mathrm{KL}(\tilde{p}_m(\bm{\theta}) ||q(\bm{\theta})) \buildrel\triangle\over = \mathtt{proj}[\tilde{p}_m(\bm{\theta})]$ these are then combined in the \textbf{outer loop}: $q(\bm{\theta}) \leftarrow \arg\min_q \sum_{m=1}^M \mathrm{KL}(q(\bm{\theta}) ||q_m(\bm{\theta})) + (N - M) \mathrm{KL}[q(\bm{\theta}) || q_{old}(\bm{\theta})]$.
 %
 %\begin{itemize}
 %	\item \textbf{inner loop:} $q_m(\bm{\theta}) \leftarrow \arg\min_q \mathrm{KL}(\tilde{p}_m(\bm{\theta}) ||q(\bm{\theta})) \buildrel\triangle\over = \mathtt{proj}[\tilde{p}_m(\bm{\theta})]$; 
@@ -59,7 +59,12 @@ It is possible that there are more direct relationships between EP fixed points 
 
 \subsection{Stochastic Power EP: Relationships to Variational Methods}
 %
-The relationship between variational inference and stochastic variational inference \cite{hoffman:svi} mirrors the relationship between EP and SEP. Can these relationships be made more formal? If the moment projection step in EP, that minimises $\mathrm{KL}(\tilde{p}_m(\bm{\theta}) ||q(\bm{\theta}))$, is replaced by the variational projection\footnote{Also called information projection (I-projection) in \cite{amari:ig}).}, which minimises $\mathrm{KL}(q(\bm{\theta})||\tilde{p}_m(\bm{\theta}) )$,  then the resulting algorithm is equivalent to the Variational Message Passing (VMP) algorithm \cite{minka:divergence}. Moreover, VMP has the same fixed points as Variational Inference \cite{winn:vmp} (since minimising the local variational KL divergences is equivalent to minimising the global variational KL).==
+The relationship between variational inference and stochastic variational inference \cite{hoffman:svi} mirrors the relationship between EP and SEP. Can these relationships be made more formal? If the moment projection step in EP, that minimises $\mathrm{KL}(\tilde{p}_m(\bm{\theta}) ||q(\bm{\theta}))$, is replaced 
+by a gradient descent/coordinate descent procedure
+%
+%by the variational projection\footnote{Also called information projection (I-projection) in \cite{amari:ig}).},
+%
+ which minimises $\mathrm{KL}(q(\bm{\theta})||\tilde{p}_m(\bm{\theta}) )$,  then the resulting algorithm is equivalent to the Variational Message Passing (VMP) algorithm \cite{minka:divergence}. Moreover, VMP has the same fixed points as Variational Inference \cite{winn:vmp} (since minimising the local variational KL divergences is equivalent to minimising the global variational KL).
 
 %These results carry over to the new algorithms developed here. First, if we use a variational KL for the moment-matching step, AEP has the same fixed points as VMP and therefore as Variational Inference (see supplementary material) \todo[fancyline]{double check this is technically correct}. Similarly the variational version of SEP (and minibatch variants) is a form of stochastic VMP, similar to SVI, which has the same fixed points as VMP/VI in expectation. More generally, EP and VMP are specific instances of the power-EP algorithm that minimises an alpha-Divergence in the matching step and SEP can be similarly generalised. These results lend weight to the view that SEP is a natural stochastic generalisation of EP.
 
@@ -103,13 +108,15 @@ Typically, EP would approximate the effect of each intractable term using a prod
 q(\bm{\theta}, \{ \bm{h}_n\}) \buildrel\triangle\over = p_0(\bm{\theta}) f(\bm{\theta})^N \prod_{n=1}^N g_n(\bm{h}_n) .
 \end{equation}
 %
-Fortunately the local factors $g_n(\bm{h}_n)$ do not need to be maintained in memory since the true posterior factorises over data-points. More formally, the cavity distribution is $q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) = q(\bm{\theta}, \{ \bm{h}_n\})/(f(\bm{\theta}) g_n(\bm{h}_n)) $ and the tilted distribution $\tilde{p}_n(\bm{\theta}, \{ \bm{h}_n\}) = q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n)$ which leads to the a moment-update that minimises 
+Fortunately the local factors $g_n(\bm{h}_n)$ do not need to be maintained in memory since the true posterior factorises over data-points. Importantly, this implies the local factors $\{ g_m(\bm{h}_m) \}$ do not need to be retained, explained in detail in the supplementary material.
+
+%More formally, the cavity distribution is $q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) = q(\bm{\theta}, \{ \bm{h}_n\})/(f(\bm{\theta}) g_n(\bm{h}_n)) $ and the tilted distribution $\tilde{p}_n(\bm{\theta}, \{ \bm{h}_n\}) = q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n)$ which leads to the a moment-update that minimises 
 %
-\begin{equation}
-\mathrm{KL}[ p_0(\bm{\theta}) f(\bm{\theta})^{N-1} p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m) || p_0(\bm{\theta}) f(\bm{\theta})^{N-1} f'(\bm{\theta}) g_n(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m)] .\nonumber
-\end{equation}
+%\begin{equation}
+%\mathrm{KL}[ p_0(\bm{\theta}) f(\bm{\theta})^{N-1} p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m) || p_0(\bm{\theta}) f(\bm{\theta})^{N-1} f'(\bm{\theta}) g_n(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m)] .\nonumber
+%\end{equation}
 %
-with respect to $f'(\bm{\theta}) g_n(\bm{h}_n)$. Importantly, the terms involving $\prod_{m\ne n} g_m(\bm{h}_m)$ cancel meaning these factors do not need to be retained.
+%with respect to $f'(\bm{\theta}) g_n(\bm{h}_n)$. Importantly, the terms involving $\prod_{m\ne n} g_m(\bm{h}_m)$ %cancel meaning these factors do not need to be retained.
 
 
 %More formally we write the cavity distribution and tilted distribution computed in this scenario and assume we select $\bm{x}_i$ as the current datapoint:
