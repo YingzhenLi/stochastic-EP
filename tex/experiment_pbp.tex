@@ -1,6 +1,6 @@
 \subsection{Probabilistic back-propagation}
 
-The final set of tests consider more complicated models and large datasets. Specifically we evaluate the methods for probabilistic-backpropagation (PBP) \cite{hernandez2015probabilistic}, a
+The final set of tests consider more complicated models and large datasets. Specifically we evaluate the methods for probabilistic-backpropagation (PBP) \cite{miguel:pbp}, a
 recent state-of-the-art method for scalable Bayesian learning in neural
 network models. Previous implementations of PBP perform several iterations of ADF over the training
 data.  The moment-matching operations required by ADF are themselves intractable and they are approximated by
@@ -10,7 +10,7 @@ Previous implementations of PBP are based on ADF to reduce the large memory cost
 when the amount of available data is very large.
 
 %<<<<<<< HEAD
-We performed several experiments to assess the accuracy of different implementations of PBP based on ADF, SEP and EP on regression datasets \cite{} following the same experimental protocol as in \cite{hernandez2015probabilistic}.%\todo[fancyline]{need to reference the datasets -- they are regression datasets right? Seemed wrong in conclusion} 
+We performed several experiments to assess the accuracy of different implementations of PBP based on ADF, SEP and EP on regression datasets following the same experimental protocol as in \cite{miguel:pbp}.%\todo[fancyline]{need to reference the datasets -- they are regression datasets right? Seemed wrong in conclusion} 
 We considered neural networks with 100 hidden units and followed the same experimental protocol 
 as described by \cite{miguel:pbp}.
 Table 2 shows the average test RMSE and test log-likelihood for each method. Interestingly, SEP can outperform EP in this setting (possibly because the stochasticity enabled it to find better solutions better optima), and typically it performed similarly. Memory reductions using SEP instead of EP were large e.g.~694Mb for the Protein dataset and 65,107Mb for the Year dataset (see supplementary material for full details). Surprisingly ADF often outperformed EP, although the results presented for ADF use a near-optimal number of sweeps and further iterations generally degraded performance. ADF's good performance is most likely due to an interaction with additional the moment-approximation that is required in PBP.
