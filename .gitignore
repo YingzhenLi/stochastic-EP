@@ -20,3 +20,7 @@ tex/nips_sep.aux
 *.blg
 
 *.log
+
+tex/nips_sep.bbl
+
+tex/nips_sep.bbl
