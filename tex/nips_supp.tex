@@ -9,9 +9,11 @@
 \usepackage{graphicx}
 
 %\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
+\usepackage{color,soul}
 
 
 \newtheorem{theorem}{Theorem}
+\newtheorem{prop}{Proposition}
 
 \mathchardef\mhyphen="2D
 
@@ -55,22 +57,23 @@ Cambridge, CB2 1PZ, UK \\
 
 \appendix
 
-\section{Further theoretical tesults}
+\section{Further theoretical results}
 We described the extensions of stochastic expectation propagation (SEP) in the main text, and we provide more details in this section.
+
 \subsection{Power EP and alpha-EP}
-The analysis of EP and variational inference (VI) relationships asks for an introduction of power EP (PEP). As a preparation let us consider the alpha-divergence first introduced in \cite{amari:ig1985}
+The analysis of EP and variational inference (VI) relationships asks for an introduction of power EP (PEP). As a preparation let us consider the alpha-divergence\footnote{\hl{A little math can show the updates of alpha-EP using different existing definitions are equivalent, although the corresponding alpha may be different.}} introduced in \cite{amari:ig1985}
 \begin{equation}
-D_{\alpha}(p(\bm{\theta}) || q(\bm{\theta})) = \frac{4}{1 - \alpha^2} 
+D_{\alpha}[p(\bm{\theta}) || q(\bm{\theta})] = \frac{4}{1 - \alpha^2} 
 		\left( 1 - \int_{\bm{\theta}} p(\bm{\theta})^{ \frac{1+\alpha}{2}} q(\bm{\theta})^{ \frac{1- \alpha}{2}} d\bm{\theta} \right).
 \end{equation} 
 The two cases of KL-divergence also belongs to the family of alpha-divergence by definition:
 \begin{align}
-D_{1}(p(\bm{\theta})||q(\bm{\theta})) &\buildrel\triangle\over = \lim_{\alpha \rightarrow 1} D_{\alpha}(p(\bm{\theta})||q(\bm{\theta}))  = \mathrm{KL}[p(\bm{\theta}) || q(\bm{\theta})], \\
-D_{ \mhyphen 1}(p(\bm{\theta})||q(\bm{\theta})) &\buildrel\triangle\over = \lim_{\alpha \rightarrow \mhyphen 1} D_{\alpha}(p(\bm{\theta}) || q(\bm{\theta}))  = \mathrm{KL}[q(\bm{\theta}) || p(\bm{\theta})].
+D_{1}[p(\bm{\theta})||q(\bm{\theta})] &\buildrel\triangle\over = \lim_{\alpha \rightarrow 1} D_{\alpha}[p(\bm{\theta})||q(\bm{\theta})]  = \mathrm{KL}[p(\bm{\theta}) || q(\bm{\theta})], \\
+D_{ \mhyphen 1}[p(\bm{\theta})||q(\bm{\theta})] &\buildrel\triangle\over = \lim_{\alpha \rightarrow \mhyphen 1} D_{\alpha}[p(\bm{\theta}) || q(\bm{\theta})]  = \mathrm{KL}[q(\bm{\theta}) || p(\bm{\theta})].
 \end{align}
-\cite{minka:powerep} introduced alpha-EP as a generalisation of EP to alpha-divergences, which changes the moment matching step to alpha-projection \cite{amari:alpha_proj} that returns the minimiser of the alpha divergence $D_{\alpha}(\tilde{p}_n(\bm{\theta}) || q(\bm{\theta}))$ wrt.~$q(\bm{\theta})$ in $\mathcal{Q}$. Examples include the previous defined moment projection $\mathtt{proj}[\cdot]$ which takes $\alpha = 1$, and information projection which chooses $\alpha = -1$. However alpha-projections are difficult to compute in general, which motivates the power EP algorithm, summarised in Algorithm \ref{alg:pep}, as a practical alternative. \cite{minka:powerep} showed that power EP with power $1 / \beta, \beta < \infty$ returns a local optimum of the alpha divergence with $\alpha = -1 + 2 / \beta$ when converged. 
+\cite{minka:powerep} introduced alpha-EP as a generalisation of EP to alpha-divergences, which changes the moment matching step to alpha-projection \cite{amari:alpha_proj} that returns the minimiser of the alpha divergence $D_{\alpha}[\tilde{p}_n(\bm{\theta}) || q(\bm{\theta})]$ wrt.~$q(\bm{\theta})$ in $\mathcal{Q}$. Examples include moment projection $\mathtt{proj}[\cdot]$ which takes $\alpha = 1$, and information projection which chooses $\alpha = -1$. However alpha-projections are difficult to compute in general, motivating power EP (Algorithm \ref{alg:pep}) as a practical alternative. \cite{minka:powerep} showed that power EP with power $1 / \beta, \beta < \infty$ returns a local optimum of the alpha divergence with $\alpha = -1 + 2 / \beta$ when converged. 
 %
-However $\alpha = -1$ or $\beta = \infty$ can be a pathological case if applying PEP since the above equivalence does not apply. In this sense VMP cannot be interpreted as a special case of power EP which takes $\alpha \rightarrow -1$. This observation extends to stochastic PEP as well (Algorithm \ref{alg:spep}). Instead we derive stochastic VMP in the spirit that SEP extends EP, which keeps the computational steps using current global estimate but tie all the local factors. We discuss this extension in detail in the next section and provide its connection to stochastic variational inference.
+\hl{However this still leaves the pathological case $\alpha = -1$ or $\beta = \infty$ since the above equivalence does not apply. Thus variatioinal message passing (VMP), which takes $\alpha \rightarrow -1$, cannot be interpreted as a special case of power EP.} This observation extends to stochastic PEP as well (Algorithm \ref{alg:spep}). Instead we derive stochastic VMP in the spirit that SEP extends EP, which keeps the computational steps using current global estimate but tie all the local factors. We discuss this extension in detail in the next section and provide its connection to stochastic variational inference.
 
 \begin{figure}[!t]
 % UGLY USE OF \vspace & \hspace follows
@@ -112,122 +115,51 @@ However $\alpha = -1$ or $\beta = \infty$ can be a pathological case if applying
 \end{figure}
 
 \subsection{Connecting SVMP to SVI}
-We first briefly sketch the VMP algorithm using EP framework but replacing the moment matching step with natural parameter matching. At time $t$ we have the current estimate of the natural parameter $\bm{\lambda}_q^t$, which is defined as the sum of local variational parameters:
+We first briefly sketch the VMP algorithm using EP framework but replacing the moment matching step with natural parameter matching. We assume the approximate posterior $q(\bm{\theta})$ is in some exponential family: 
+\begin{equation}
+q(\bm{\theta}) \propto \exp \left[ \langle \bm{\lambda}_q, \bm{\phi}(\bm{\theta}) \rangle \right].
+\end{equation}
+At time $t$ we have the current estimate of the natural parameter $\bm{\lambda}_q^t$, which is defined as the sum of local variational parameters\footnote{This notation implicitly assumes that the prior also belongs to the approximate distribution family $\mathcal{Q}$. In general we can propose another factor to approximate $p_0(\bm{\theta})$, and our result still applies.}:
 %
 $\bm{\lambda}_q^t \buildrel\triangle\over = \bm{\lambda}_0 + \sum_{n=1}^N \bm{\lambda}_n^t$.
 %
-Here $\bm{\lambda}_0$ represents the natural parameter of the prior distribution $p_0(\bm{\theta})$ \footnote{This notation implicitly assumes that the prior also belongs to the approximate distribution family $\mathcal{Q}$. In general this does not have to be the case, however we can propose another factor to approximate $p_0(\bm{\theta})$, and our result still applies.}. VMP iteratively computes the update of each local estimate $\bm{\lambda}_n^{t+1}$ in the following procedure. First VMP computes the expected sufficient statistics $\hat{\bm{s}}_n$ about datapoint $\bm{x}_n$ using $\bm{\lambda}_q^t$, then forms the gradient as though optimising the maximised evidence lower bound (ELBO) but with $q_{-1}(\bm{\theta})$ as the prior:
+Here $\bm{\lambda}_0$ represents the natural parameter of the prior distribution $p_0(\bm{\theta})$. VMP iteratively computes the update of each local estimate $\bm{\lambda}_n^{t+1}$ in the following procedure. First VMP computes the expected sufficient statistics $\hat{\bm{s}}_n$ about datapoint $\bm{x}_n$ using $\bm{\lambda}_q^t$, \hl{e.g.~$\hat{\bm{s}}_n = E_{q}[t(z_n, x_n)]$ in the original SVI paper} \cite{hoffman:svi}. Then VMP forms the gradient as though optimising the maximised evidence lower bound (ELBO) but with $q_{-1}(\bm{\theta})$ as the prior:
 \begin{align}
-\nabla_{\bm{\lambda}_q} \mathcal{L} &= \bm{\lambda}_{-1}^t + \hat{\bm{s}}_n - \bm{\lambda}_q, \\
+\nabla_{\bm{\lambda}_q^t} \mathcal{L} &= \bm{\lambda}_{-1}^t + \hat{\bm{s}}_n - \bm{\lambda}_q^t, \\
 \bm{\lambda}_{-1}^t &= \bm{\lambda}_q^t - \bm{\lambda}_{n}^t.
 \end{align}
-Next VMP zeros the gradient and recovers the current update $\bm{\lambda}_n^{t+1} = \hat{\bm{s}}_n$. The stochastic version of VMP, if extended in a way as SEP developed from EP, defines the global variational parameters as $\bm{\lambda}_q^t \buildrel\triangle\over = \bm{\lambda}_0 + N \bm{\lambda}^t$. It computes the expected sufficient statistics $\hat{\bm{s}}_n$ in the same way as VMP but changes the cavity to $\bm{\lambda}_{-1}^t = \bm{\lambda}_q^t - \bm{\lambda}^t$ in the ELBO maximisation steps. Readers can verify that this returns the current update $\bm{\lambda}^{t+1} = \hat{\bm{s}}_n$ and, since we tie all the local updates, the global parameter update $\bm{\lambda}_q^{t+1} = \bm{\lambda}_0 + N \bm{\lambda}^{t+1} = \bm{\lambda}_0 + N \hat{\bm{s}}_n$. In practice we perform a damped update, where a typical choice of step size is $\epsilon = 1/N$ like in SEP:
+Next VMP zeros the gradient and recovers the current update $\bm{\lambda}_n^{t+1} = \hat{\bm{s}}_n$. The stochastic version of VMP, if extended in a way as SEP developed from EP, defines the global variational parameters as $\bm{\lambda}_q^t \buildrel\triangle\over = \bm{\lambda}_0 + N \bm{\lambda}^t$. It computes the expected sufficient statistics $\hat{\bm{s}}_n$ in the same way as VMP but changes the cavity to $\bm{\lambda}_{-1}^t = \bm{\lambda}_q^t - \bm{\lambda}^t$ in the ELBO maximisation steps. Readers can verify that this returns the current update $\bm{\lambda}^{t+1} = \hat{\bm{s}}_n$ \hl{using the important fact that the local update ONLY depends on the global parameter $\bm{\lambda}_q^t$.} Now since we tie all the local updates, the global parameter update $\bm{\lambda}_q^{t+1} = \bm{\lambda}_0 + N \bm{\lambda}^{t+1} = \bm{\lambda}_0 + N \hat{\bm{s}}_n$. In practice we perform a damped update, where a typical choice of step size is $\epsilon = 1/N$ like in SEP:
 \begin{equation}
 \bm{\lambda}_q^{t+1} \leftarrow (1 - \frac{1}{N}) \bm{\lambda}_q^t + \frac{1}{N}(\bm{\lambda}_0 + N \bm{\lambda}^{t+1}) = \bm{\lambda}_0 + (N-1) \bm{\lambda}^t + \hat{\bm{s}}_n.
 \end{equation} 
 
-On the other hand, \cite{mandt:smoothedSVI} summarises the stochastic variational algorithm as to compute the current update by zeroing the gradient
+On the other hand, \cite{mandt:smoothedSVI} summarises stochastic variational inference (SVI) as to compute the current update by zeroing the gradient
 \begin{equation}
 \nabla_{\bm{\lambda}_q} \mathcal{L} = \bm{\lambda}_0 + N \hat{\bm{s}}_n - \bm{\lambda}_q,
 \end{equation}
 which returns $\bm{\lambda}_q^{t+1} = \bm{\lambda}_0 + N \hat{\bm{s}}_n$ as well. This implies that SVI, when using learning rate $\epsilon = 1/N$, is equivalent to SVMP. 
 
-%\subsection{Equivalence between the Averaged VMP and Variational Inference}
-%We briefly discuss the equivalence between averaged VMP and variational inference.  
-%%
-%Without loss of generality we provide a proof on exponential families. 
-%
-%We first define the exponential families for prior, likelihood terms and the approximate posterior,
-%\begin{align}
-%\mathcal{P}_0 &= \{p_0(\bm{\theta}) = \exp \left( \langle \bm{\epsilon}_0, \gamma(\bm{\theta}) \rangle - A(\bm{\epsilon}_0) \right) |\ \bm{\epsilon}_0 \in \bm{E} \ s.t.~ A(\bm{\epsilon}_0) < \infty \}, \\
-%\mathcal{P} &= \{p(\bm{x} | \bm{\theta}) = \exp \left( \langle \beta(\bm{\theta}), \psi(\bm{x}) \rangle - A(\bm{\theta}) \right) |\ \bm{\theta} \in \bm{\Theta} \ s.t.~ A(\bm{\theta}) < \infty \}, \\
-%\mathcal{Q} &= \{q(\bm{\theta}) = \exp \left( \langle \bm{\lambda}_q, \phi(\bm{\theta}) \rangle - A(\bm{\lambda}_q) \right) |\ \bm{\lambda}_q \in \bm{\Lambda} \ s.t.~ A(\bm{\lambda}_q) < \infty \},
-%\end{align}
-%where $A(\cdot)$ represents the log partition function to guarantee a valid distribution. We denote the natural parameters of the approximating factor $f(\bm{\theta})$, and the intermediate answers $f_n(\bm{\theta})$ as $\bm{\lambda}$ and $\bm{\lambda}_n$, respectively. In EP we often use $\mathcal{P}_0 \subset \mathcal{Q}$ and in that case we also write $\bm{\lambda}_0$ as the natural parameter of $p_0$ when considering it in family $\mathcal{Q}$.
-%
-%We next write the exponential family containing the true posterior and the tilted distribution:
-%\begin{equation}
-%\mathcal{\tilde{P}} = \{p(\bm{\theta}) = \exp \left( \langle \bm{\eta}, \Phi(\bm{\theta}) \rangle - A(\bm{\eta}) \right) |\ \bm{\eta} \in \bm{H} \ s.t.~ A(\bm{\eta}) < \infty \}, \\
-%\end{equation}
-%with sufficient statistics $\Phi(\bm{\theta}) = [\gamma(\bm{\theta}), \phi(\bm{\theta}), \beta(\bm{\theta}), A(\bm{\theta})]$ \footnote{We assume $\phi$, $\beta$ and $A$ are linearly independent wrt.~operation $E_{\tilde{p}}[\cdot], \forall \tilde{p} \in \tilde{\mathcal{P}}$ w.l.o.g.}. It is straight-forward that the true posterior has natural parameter $\bm{\eta}_p = [\bm{\epsilon}_0, \bm{0},\sum_{n} \psi(\bm{x}_n), -N]$, and the tilted distributions $\tilde{p}_n(\bm{\theta})$ has $\bm{\eta}_n = [\bm{0}, \bm{\lambda}_{-1}, \psi(\bm{x}_n), -1]$. 
-%%
-%We recall the AVMP algorithm with current notations, which defines
-%\begin{align}
-%\bm{\lambda}_q &= \bm{\lambda}_0 + N \bm{\lambda}, \\
-%\bm{\lambda}_{-1} & = \bm{\lambda}_0 + (N-1) \bm{\lambda}.
-%\end{align}
-%AVMP minimises $KL[q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})]$ with coordinate descent computed using the current global estimate $\lambda_q$. Each of them contributes a local factor $\bm{\lambda}_n$ to the final update defined as $\bm{\lambda}_q \leftarrow \bm{\lambda}_0 + \sum_{n=1}^N \bm{\lambda}_n$, which means $\bm{\lambda} \leftarrow \frac{1}{N} \sum_{n=1}^N \bm{\lambda}_n$.
-%
-%%
-%Now we state the following theorem. 
-%%
-%\begin{theorem}
-%The averaged variational message passing algorithm, when converged to a fixed point, returns a local optimum of variational inference.
-%\end{theorem}
-%\begin{proof}
-%We first consider the case that $\mathcal{P}_0 \subset \mathcal{Q}$, which means $\bm{\lambda}_0$ is a fixed vector corresponding to the prior term. VI directly minimises the global KL divergence wrt.~$q(\bm{\theta})$:
-%\begin{equation}
-%KL[q(\bm{\theta}) || p(\bm{\theta} | D)] = \langle \bm{\lambda}_q, E_q \phi(\bm{\theta}) \rangle - A(\bm{\lambda}_q) - \langle \bm{\eta}_p, E_q \Phi(\bm{\theta}) \rangle + A(\bm{\eta}_p).
-%\end{equation}
-%Using $\bm{\eta}_p = [\bm{\lambda}_0, \sum_{n} \psi(\bm{x}_n), -N]$,
-%\begin{equation}
-%\nabla_{\bm{\lambda}_q}^{VI} KL[q(\bm{\theta}) || p(\bm{\theta} | D)] = \langle \bm{\lambda}_q - \bm{\lambda}_0, \nabla_{\bm{\lambda}_q} E_q \phi(\bm{\theta}) \rangle - \langle \sum_{n} \psi(\bm{x}_n), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle + N \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
-%\end{equation}
-%On the other hand, the inner loop of the AVMP compute coordinate descent on the following divergence using the current global approximation $q(\bm{\theta})$,
-%\begin{equation}
-%KL[q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})] = \langle \bm{\lambda}_q, E_q \phi(\bm{\theta}) \rangle - A(\bm{\lambda}_q) - \langle \bm{\eta}_n, E_q \Phi(\bm{\theta}) \rangle + A(\bm{\eta}_n).
-%\end{equation}
-%We treat the cavity parameter $\bm{\lambda}_{-1}$ as a constant in this optimisation. Similarly we obtain the graident wrt.~$\bm{\lambda}_q$
-%\begin{equation}
-%\nabla_{\bm{\lambda}_q}^{AVMP} KL[q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})] = \langle \bm{\lambda}, \nabla_{\bm{\lambda}_q} E_q \phi(\bm{\theta}) \rangle - \langle \psi(\bm{x}_n), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle +  \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
-%\end{equation}
-%Now since the inner-loop for datapoint $\bm{x}_n$ only contributes to the intermediate answer $\bm{\lambda}_n$ by definition, we have to construct the final gradient of the global parameter by summing the gradients on the local KL divergences. Readers can verify that the gradient of the global parameter is equivalent to the gradient of VI objective, i.e.
-%\begin{equation}
-%\nabla_{\bm{\lambda}_q}^{VI} KL[q(\bm{\theta}) || p(\bm{\theta} | D)] = \sum_{n=1}^N \nabla_{\bm{\lambda}_q}^{AVMP} KL[q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})].
-%\end{equation}
-%This implies that the fixed points of AVMP are also stationary points of VI.
-%
-%We next consider the general case where $\mathcal{P}_0 \neq \mathcal{Q}$, which means we need to update $\bm{\lambda}_0$ in parallel as well. Now the gradient in VI case changes to
-%\begin{equation}
-%\begin{aligned}
-%\nabla_{\bm{\lambda}_q}^{VI} KL[q(\bm{\theta}) || p(\bm{\theta} | D)] &= \langle \bm{\lambda}_q, \nabla_{\bm{\lambda}_q} E_q \phi(\bm{\theta}) \rangle - \langle \bm{\epsilon}_0, \nabla_{\bm{\lambda}_q} E_q \gamma(\bm{\theta}) \rangle \\
-%	&- \langle \sum_{n} \psi(\bm{x}_n), \nabla_{\bm{\lambda}_q} E_q \beta(\bm{\theta}) \rangle + N \nabla_{\bm{\lambda}_q} E_q A(\bm{\theta}).
-%\end{aligned}
-%\end{equation}
-%On the other hand, AVMP also approximate the prior $p_0(\bm{\theta})$ by updating $\bm{\lambda}_0$ with normal EP. The cavity distribution is computed by $\bm{\lambda}_{-0} = \bm{\lambda}_q - \bm{\lambda}_0$. We insert the prior to form the tilted distribution $\tilde{p}_0(\bm{\theta}) \propto q_{-0}(\bm{\theta}) p_0(\bm{\theta})$, and minimise the moment matching KL by noticing $\bm{\eta}_0 = [\bm{\epsilon}_0, \bm{\lambda}_{-0}, 0, 0]$ and new update:
-%\begin{equation}
-%\nabla_{\bm{\lambda}_q}^{AVMP} KL[q(\bm{\theta}) || \tilde{p}_0(\bm{\theta})] = \langle \bm{\lambda}_0, \nabla_{\bm{\lambda}_q} E_q \phi(\bm{\theta}) \rangle - \langle \bm{\epsilon}_0, \nabla_{\bm{\lambda}_q} E_q \gamma(\bm{\theta}) \rangle.
-%\end{equation}
-%Finally readers can verify the following equivalence as well
-%\begin{equation}
-%\nabla_{\bm{\lambda}_q}^{VI} KL[q(\bm{\theta}) || p(\bm{\theta} | D)] = \sum_{n=0}^N \nabla_{\bm{\lambda}_q}^{AVMP} KL[q(\bm{\theta}) || \tilde{p}_n(\bm{\theta})],
-%\end{equation}
-%which finishes the proof.
-%\end{proof}
 
 %
 \subsection{SEP from a global approximation perspective}
 We relate SEP to a global approximation algorithm though it is computed in a truely local way. This framework utilises alpha divergence but on the global posterior, and we motivate it by describing VI and SVI as divergence minimisation.
 %
-VI performs global optimisation on $KL(q(\bm{\theta})||p(\bm{\theta}|\mathcal{D}))$, and its stochastic version, SVI, can be interpreted as computing coordinate descent on $KL(q(\bm{\theta}) || p(\bm{\theta} | \{\bm{x}_n\}^N))$ with the $N$ replicates $\{\bm{x}_n\}^N$. Similarly, we state SEP as a stochastic global optimisation procedure, which computes an iterative procedure to minimise alpha-divergence $D_{\alpha}(p(\bm{\theta} | \{\bm{x}_n\}^N) || q(\bm{\theta}))$ with $\alpha = \mhyphen 1 + 2/N$. Indeed we can understand the inner-loop of AEP as PEP with power $1/N$ if considering $f(\bm{\theta})^N$ as the ``big factor'' to approximate the likelihood term of $\bm{x}_n$ raised to power $N$.
+VI performs global optimisation on $\mathrm{KL}[q(\bm{\theta})||p(\bm{\theta}|\mathcal{D})]$, and its stochastic version, SVI, can be interpreted as \hl{in each step minimising} $\mathrm{KL}[q(\bm{\theta}) || p(\bm{\theta} | \{\bm{x}_n\}^N)]$ with the $N$ replicates $\{\bm{x}_n\}^N$. Similarly, we state SEP as a stochastic global optimisation procedure, which computes an iterative procedure to minimise alpha-divergence $D_{\alpha}[p(\bm{\theta} | \{\bm{x}_n\}^N) || q(\bm{\theta})]$ with $\alpha = \mhyphen 1 + 2/N$. Indeed we can understand the inner-loop of AEP as PEP with power $1/N$ if considering $f(\bm{\theta})^N$ as the ``big factor'' to approximate the likelihood term of $\bm{x}_n$ raised to power $N$.
 
 However minimising the alpha-divergence between the true posterior $p(\bm{\theta}|\mathcal{D})$ and the global approximation $q(\bm{\theta})$ recovers PEP on the whole dataset instead, and the factor to include in the tilted distribution changes to the intractable geometric average $\mathtt{avg}[\{p(\bm{x}_n | \bm{\theta}) \}] \buildrel\triangle\over = [\prod_n p(\bm{x}_n | \bm{\theta}) ]^{1/N} $. Readers might have noticed that the update of PEP on full dataset is given by $q(\bm{\theta}) \leftarrow \mathtt{proj}[\mathtt{avg}[\{ \tilde{p}_n(\bm{\theta}) \}]]$. In other words, we can interpret AEP as an approximation to the impractical batch PEP by interchanging computations, and we illustrate a geometric view for this in Fig. \ref{fig:aep_vs_pep}.
 
-It is important to note that SEP/AEP in convergence does not minimise the alpha divergence globally. Like PEP, the inner-loop compute $\mathtt{proj}[\tilde{p}_n(\bm{\theta})]$, where one can show that it moves towards minimising $D_{\alpha}(p(\bm{\theta} | \{\bm{x}_n\}^N) || q_n(\bm{\theta}))$ using the same techniques as before. However the outer-loop averages the natural parameters of the intermediate answers, which breaks the optimisation in the inner-loop. Furthermore, local/global optimisation of alpha divergence are inconsistent in terms of fixed point except $\alpha = -1$, the divergence utilised in VI and VMP. Indeed we provide the fixed points conditions of AEP which shows its local approximation nature.
+It is important to note that SEP/AEP in convergence does not minimise the alpha divergence globally. Like PEP, the inner-loop compute $\mathtt{proj}[\tilde{p}_n(\bm{\theta})]$, where one can show that it moves towards minimising $D_{\alpha}(p(\bm{\theta} | \{\bm{x}_n\}^N) || q_n(\bm{\theta}))$ using the same techniques as before. However the outer-loop averages the natural parameters of the intermediate answers, which \hl{does not follow the gradient direction of alpha-divergence minimisation}. Furthermore, local/global optimisation of alpha divergence are inconsistent in terms of fixed point except $\alpha = -1$, the divergence utilised in VI and VMP. Indeed we provide the fixed points conditions of AEP which shows its local approximation nature.
 %
-\begin{theorem}
+\begin{prop}
 The fixed points of averaged EP, if exist, can be written as $q(\bm{\theta}) = \mathtt{avg}[\{q_n(\bm{\theta})\}]$, where
-\begin{equation}
-q_n(\bm{\theta}) = \mathtt{proj}[\tilde{p}_n(\bm{\theta})].
-\label{eq:mm}
-\end{equation}
-These fixed points are also the fixed points of stochastic EP in expectation. 
-\end{theorem}
-\begin{proof}
-In each update SEP gives the same answers as AEP in expectation if initialised at the same starting point. Also as an analogy to normal EP, the stationary points of AEP ask for moment matching between tilted and intermediate distributions. 
-\end{proof}
+\begin{align}
+q_n(\bm{\theta}) &= \mathtt{proj}[\tilde{p}_n(\bm{\theta})], \\
+\tilde{p}_n(\bm{\theta}) & \propto q(\bm{\theta}) \frac{p(\bm{x}_n|\bm{\theta})}{f(\bm{\theta})}.
+\end{align}
+These fixed points are also the fixed points of stochastic EP \hl{in expectation}. 
+\end{prop}
 %
-This fixed point theorem applies to stochastic PEP as well when $\alpha \neq -1$, and importantly it also implies the pathology of constructing SVMP by limiting $\alpha$ to $-1$. 
+This fixed point condition applies to stochastic PEP as well when $\alpha \neq -1$, and importantly it also implies the pathology of constructing SVMP by \hl{using SPEP} and limiting $\alpha$ to $-1$. 
 
 %
 \begin{figure}
@@ -248,19 +180,19 @@ This fixed point theorem applies to stochastic PEP as well when $\alpha \neq -1$
 
 \section{Algorithmic design details}
 %
-\subsection{Comparing the distributed methods}
-We have shown in the main paper that a proper design of data partitioning improves SEP's approximation accuracy. This distributed algorithm is inspired by the Distributed EP (DEP) algorithm \cite{gelman:dep}\cite{xu:sms} presented in Algorithm \ref{alg:dep}. DEP first partitions the dataset into $K$ disjoint pieces $\{ D_k = \{\bm{x}_i\}_{i=1}^{N_k} \}$ with $N = \sum_{i=1}^K N_k$, which is well-justified since the true posterior can also be derived as
+\subsection{Distributed computing methods}
+We have shown in the main paper that a proper design of data partitioning improves SEP's approximation accuracy. This distributed algorithm is inspired by the Distributed EP (DEP) algorithm \cite{gelman:dep, xu:sms} presented in Algorithm \ref{alg:dep}. DEP first partitions the dataset into $K$ disjoint pieces $\{ D_k = \{\bm{x}_i\}_{i=1}^{N_k} \}$ with $N = \sum_{i=1}^K N_k$, which is well-justified since the true posterior can also be derived as
 \begin{align}
 p(\bm{\theta}|\mathcal{D}) &\propto p_0(\bm{\theta}) \prod_{k=1}^K p(\mathcal{D}_k|\bm{\theta}), \\
 p(\mathcal{D}_k|\bm{\theta}) &= \prod_{\bm{x}_n \in \mathcal{D}_k} p(\bm{x}_n | \bm{\theta}).
 \end{align}
 %
-Next DEP assigns factors to each sub-datasets likelihood, i.e.~$q(\bm{\theta}) \propto p_0(\bm{\theta}) \prod_k f_k(\bm{\theta})$ with each $f_k(\bm{\theta})$ approximating $p(\mathcal{D}_k|\bm{\theta})$. The projection step is no longer analytically tractable, as the tilted distribution with multiple datapoints lacks a simple form in general. Instead DEP computes moment matching by sampling methods, making it stochastic in the sense of moment approximation. 
+Next DEP assigns factors to each sub-dataset likelihood, i.e.~$q(\bm{\theta}) \propto p_0(\bm{\theta}) \prod_k f_k(\bm{\theta})$ with each $f_k(\bm{\theta})$ approximating $p(\mathcal{D}_k|\bm{\theta})$. The projection step is no longer analytically tractable in general since the tilted distribution with multiple datapoints often lacks a simple form. Instead DEP handles moment matching with sampling, making it stochastic in the sense of moment approximation. 
 
 %
 To have a deterministic counterpart of DEP, we consider SEP/AEP inside each partition. We name this approach as Distributed SEP/AEP (DSEP/DAEP) and provide a comparison in Fig. \ref{fig:dep_sep_dsep} with DEP and SEP using sampling protocol. Different from DEP, the approximate posterior for DSEP is defined as $q(\bm{\theta}) \propto p_0(\bm{\theta}) \prod_k f_k(\bm{\theta})^{N_k}$, with $f_k(\bm{\theta})^{N_k}$ approximating $p(\mathcal{D}_k|\bm{\theta})$. The computations are almost the same as SEP/AEP except that the updates only modifies the copies of the corresponded subset.
 %
-The two algorithms are also detailed in Algorithm \ref{alg:dsep} and \ref{alg:daep}, respectively. Like SEP, this guarantees the correct estimation of uncertainty level as SEP corrects ADF's overfitting. 
+These two algorithms are also detailed in Algorithm \ref{alg:dsep} and \ref{alg:daep}, respectively. \hl{In section C we provide an emprical study on comparing SEP, EP and DSEP approximations.}
 
 
 \begin{figure}[!t]
@@ -328,7 +260,7 @@ q(\bm{\theta}, \{ \bm{h}_n\}) \buildrel\triangle\over \propto p_0(\bm{\theta}) f
 \end{equation}
 In other words, SEP uses $f(\bm{\theta}) g_n(\bm{h}_n)$ to approximate $p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n)$.
 
-Next we show a critical advantage of SEP on approximating latent variable posterior: the local factors $g_n(\bm{h}_n)$ do not need to be maintained in memory since the true posterior factorises over data-points. 
+Next we show a critical advantage of SEP on approximating latent variable posterior: the local factors $g_n(\bm{h}_n)$ do not need to be maintained in memory \hl{if it can be computed without special requirements for initialisations.} 
 %
 More formally, the cavity distribution is $q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) \propto q(\bm{\theta}, \{ \bm{h}_n\})/(f(\bm{\theta}) g_n(\bm{h}_n)) $ and the tilted distribution is $\tilde{p}_n(\bm{\theta}, \{ \bm{h}_n\}) \propto q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n)$. This leads to the a moment-update that minimises 
 %
@@ -336,22 +268,19 @@ More formally, the cavity distribution is $q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) \p
 \mathrm{KL}[ p_0(\bm{\theta}) f(\bm{\theta})^{N-1} p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m) || p_0(\bm{\theta}) f(\bm{\theta})^{N-1} f'(\bm{\theta}) g_n(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m)] .\nonumber
 \end{equation}
 %
-with respect to $f'(\bm{\theta}) g_n(\bm{h}_n)$. Importantly, the terms involving $\prod_{m\ne n} g_m(\bm{h}_m)$ are cancelled, meaning that these factors do not need to be retained.
+with respect to $f'(\bm{\theta}) g_n(\bm{h}_n)$. Importantly, the terms involving $\prod_{m\ne n} g_m(\bm{h}_m)$ are cancelled, meaning that these factors \hl{do not contribute to the local approximation step. For simple models the moments of $\bm{h}_n$ can be computed analytically given $q_{-1}(\bm{\theta})$, thus $g_n{\bm{h}_n}$ is never stored in memory resulting in a reduced memory footprint by a factor of $N$ again. However in practice people may prefer maintaining the $g$ factors in memory, if the moment computation requires another optimisation inner-loop (which might be more expensive than the moment matching step itself). Examples include latent Dirichlet allocation} \cite{blei:lda} \hl{that has a hierachy of latent variables, where VI methods also store variational $q$ distributions for some of the hidden variables. One potential recipe in this scenario is to learn the moments/messages passed in each SEP step, where interested readers are directed to} \cite{heess:learning_messages, jitkrittum:kernel}.
 
-It is also possible to have latent variables globally shared or shared in a data piece $\mathcal{D}_k$. But now we can extend SEP to these latent variables accordingly, which still provides computation gains in space complexity. In mathematical forms, assume $\bm{h}_k$ a latent variable shared in $\mathcal{D}_k$. Then we construct $q(\bm{h}_k) \propto p_0(\bm{h}_k) g_k(\bm{h}_k)^{N_k}$ to approximate its posterior. This procedure still reduces memory by a factor of $N-K$.
-
-%More formally we write the cavity distribution and tilted distribution computed in this scenario and assume we select $\bm{x}_i$ as the current datapoint:
-%\begin{align}
-%q_{-1}(\bm{\theta}, \bm{h}_i) &\propto  p_0(\bm{\theta}) f(\bm{\theta})^{N-1} p_0(\bm{h}_i), \\
-%\tilde{p}_i(\bm{\theta}, \bm{h}_i) &\propto p_0(\bm{\theta}) f(\bm{\theta})^{N-1} p_0(\bm{h}_i) p(\bm{x}_i, \bm{h}_i | \bm{\theta}).
-%\end{align}
-%So the local factor $f(\bm{h}_i)$ is always removed from the global approximation and has no effect on the tilted distribution. This even implies that we do not need to compute the higher moments of $\bm{h}_i$ except its contribution to $q(\bm{\theta})$. Those sufficient statistics are only required when performing EP inference, which is by considering the test data as the next incoming datapoint and proposing the same approximation structure. 
+It is also possible to have latent variables globally shared or shared in a data piece $\mathcal{D}_k$. But we can also extend SEP to these latent variables accordingly, which still provides computation gains in space complexity. In mathematical forms, assume $\bm{h}_k$ a latent variable shared in $\mathcal{D}_k$. Then we construct $q(\bm{h}_k) \propto p_0(\bm{h}_k) g_k(\bm{h}_k)^{N_k}$ to approximate its posterior. This procedure still reduces memory by a factor of $N/K$.
 
 \section{Further experimental results}
 
-We also provide the memory consumption details for experiments using probabilistic back-propagation (PBP) in Table \ref{tab:memory}. We observe substantial memory reductions by running SEP instead of EP, while still attaining similar accuracies. Especially for Year, which is a typical large-scale dataset both in the number of observations $N$ and the dimensionality $D$, SEP achieves tens of gigabytes savings. In fact we ran the test for EP using a machine with more than 100GB RAM, which reveals the incredibly huge memory requirement of full EP. 
+\hl{Miguel's paragraph on the PBP details}
 
-Although not a main purpuse, we further test the performance of SEP with sampling methods to compute moments \footnote{code adjusted from \texttt{ep-stan}: \url{https://github.com/gelman/ep-stan}}. We re-use the settings of probit regression but change the probit unit to sigmoid function, making the moment projection analytically intractable. We partition the dataset into $K = 20$ subsets $\{\mathcal{D}_k\}$, construct the approximate posterior with local factors over the subsets, and tie them in SEP/AEP as before. Again as presented in Fig. \ref{fig:sep_logit}, SEP performs almost as well as EP, which further justifies SEP even with sampling methods. Also AEP is indistinguishable from DEP, but it reduces memory by a factor of $K$.
+We also provide the memory consumption details for experiments using probabilistic back-propagation (PBP) in Table \ref{tab:memory}. We observe substantial memory reductions by running SEP instead of EP, while still attaining similar accuracies. Especially for Year Prediction MSD dataset, which is a typical large-scale dataset both in the number of observations $N$ and the dimensionality $D$, SEP achieves tens of gigabytes savings. \hl{We performed the test for EP using a machine with more than 100GB RAM, while SEP only required 2.7GB memory, including the space of storing the dataset (1.9GB). These numbers reveal the incredibly huge memory requirement of full EP and further support SEP as a practical alternative in big data, big model settings.}
+
+\hl{Kernel probit regression}
+
+Although not a main purpuse, we further test the performance of SEP with sampling methods to compute moments \footnote{code adjusted from \texttt{ep-stan}: \url{https://github.com/gelman/ep-stan}}. We re-use the settings of probit regression but change the probit unit to sigmoid function, making the moment projection analytically intractable. We randomly partition the dataset into $K = 20$ subsets $\{\mathcal{D}_k\}$, construct the approximate posterior with local factors over the subsets, and tie them in SEP/AEP as before. \hl{Note that we perform sequential computations for DEP and AEP although they are ideally suited for paralel computing.} Again as presented in Fig. \ref{fig:sep_logit}, SEP performs almost as well as EP, which further justifies SEP even with sampling methods. Also AEP is indistinguishable from DEP, but it reduces memory by a factor of $K$.
 
 \begin{figure}
 \centering
@@ -359,13 +288,13 @@ Although not a main purpuse, we further test the performance of SEP with samplin
 \begin{minipage}[!t]{0.5\linewidth}
 \subfigure[\label{tab:memory}]{
 
-\begin{tabular}{lrrr}\hline \bf{Dataset}& $N$ & $d$ & MB reduction\\ \hline 
+\begin{tabular}{lrrr}\hline \bf{Dataset}& $N$ & $D$ & MB reduction\\ \hline 
 Kin8nm & 8,192 & 8 & 58MB \\ 
 Naval & 11,934 & 16 & 147MB\\ 
 Power Plant & 9,568 & 4 & 37MB\\ 
 Protein & 45,730 & 9 & \bf{694MB}\\ 
 Wine & 1,599 & 11 & 14MB\\ 
-Year & 515,340 & 90 & \bf{65107MB}\\ \hline 
+Year & 515,345 & 90 & \bf{65107MB}\\ \hline 
 \hspace{1mm}\\ \vspace{1.0mm} \hspace{1mm}\\
 \end{tabular}
 } 
@@ -401,6 +330,7 @@ Year & 515,340 & 90 & \bf{65107MB}\\ \hline
 
 \subsubsection*{References}
 \renewcommand{\section}[2]{}
+\small
 \bibliographystyle{unsrt}
 \bibliography{nips_sep}
 
