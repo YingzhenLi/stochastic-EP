@@ -11,6 +11,8 @@
 %\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
 \usepackage{color,soul}
 
+\newcommand{\ica}{\hspace{0.25cm}}
+\renewcommand{\arraystretch}{0.94}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{prop}{Proposition}
@@ -274,26 +276,14 @@ It is also possible to have latent variables globally shared or shared in a data
 
 \section{Further experimental results}
 
-We perform neural network regression experiments with publicly available data sets and neural
-networks with one hidden layer.  Table~\ref{tab:datasets_neural_networks} lists the analyzed
-data sets and shows summary statistics.  We use neural networks with 50 hidden
-units in all cases except in the two largest ones, i.e., \emph{Year Prediction
-MSD} and \emph{Protein Structure}, where we use 100 hidden units.
-The different methods, SEP, EP and ADF were run by performing 40 passes over
-the available training data, updating the parameters of the posterior
-approximation after seeing each data point.  The data sets are split into
-random training and test sets with 90\% and 10\% of the data, respectively.
-This splitting process is repeated 20 times and the average test performance of
-each method is reported. In the two largest data sets, \emph{Year Prediction
-MSD} and \emph{Protein Structure}, we do the train-test splitting only one and
-five times respectively. The data sets are normalized so that the input
-features and the targets have zero mean and unit variance in the training set.
-The normalization on the targets is removed for prediction.
+\subsection{Details of Bayesian neural network tests}
 
+We perform neural network regression experiments with publicly available data sets and neural networks with one hidden layer.  Table~\ref{tab:datasets_neural_networks} lists the analyzed data sets and shows summary statistics.  We use neural networks with 50 hidden units in all cases except in the two largest ones, i.e., \emph{Year Prediction
+MSD} and \emph{Protein Structure}, where we use 100 hidden units. The different methods, SEP, EP and ADF were run by performing 40 passes over the available training data, updating the parameters of the posterior approximation after seeing each data point.  The data sets are split into random training and test sets with 90\% and 10\% of the data, respectively. This splitting process is repeated 20 times and the average test performance of each method is reported. In the two largest data sets, \emph{Year Prediction MSD} and \emph{Protein Structure}, we do the train-test splitting only one and five times respectively. The data sets are normalized so that the input features and the targets have zero mean and unit variance in the training set. The normalization on the targets is removed for prediction.
 
 We also provide the memory consumption details for experiments using probabilistic back-propagation (PBP) in Table \ref{tab:memory}. We observe substantial memory reductions by running SEP instead of EP, while still attaining similar accuracies. Especially for Year Prediction MSD dataset, which is a typical large-scale dataset both in the number of observations $N$ and the dimensionality $D$, SEP achieves tens of gigabytes savings. \hl{We performed the test for EP using a machine with more than 100GB RAM, while SEP only required 2.7GB memory, including the space of storing the dataset (1.9GB). These numbers reveal the incredibly huge memory requirement of full EP and further support SEP as a practical alternative in big data, big model settings.}
 
-\hl{Kernel probit regression}
+\subsection{Stochastic EP with sampling protocal}
 
 Although not a main purpuse, we further test the performance of SEP with sampling methods to compute moments \footnote{code adjusted from \texttt{ep-stan}: \url{https://github.com/gelman/ep-stan}}. We re-use the settings of probit regression but change the probit unit to sigmoid function, making the moment projection analytically intractable. We randomly partition the dataset into $K = 20$ subsets $\{\mathcal{D}_k\}$, construct the approximate posterior with local factors over the subsets, and tie them in SEP/AEP as before. \hl{Note that we perform sequential computations for DEP and AEP although they are ideally suited for paralel computing.} Again as presented in Fig. \ref{fig:sep_logit}, SEP performs almost as well as EP, which further justifies SEP even with sampling methods. Also AEP is indistinguishable from DEP, but it reduces memory by a factor of $K$.
 
@@ -327,21 +317,6 @@ Year & 515,345 & 90 & \bf{65107MB}\\ \hline
 \caption{(a) Memory reduction figures on regression datasets. (b) Performance of EP methods on Bayesian logistic regression with sampling moment computations.}
 \end{figure}
 
-%\begin{table} 
-%\begin{minipage}[!t]{0.6\linewidth}
-%\small
-%\centering 
-%\begin{tabular}{lrrr}\hline \bf{Dataset}& $N$ & $d$ & MB reduction\\ \hline 
-%Kin8nm & 8,192 & 8 & 58MB \\ 
-%Naval & 11,934 & 16 & 147MB\\ 
-%Power Plant & 9,568 & 4 & 37MB\\ 
-%Protein & 45,730 & 9 & \bf{694MB}\\ 
-%Wine & 1,599 & 11 & 14MB\\ 
-%Year & 515,340 & 90 & \bf{65107MB}\\ \hline 
-%\end{tabular} 
-%\caption{ Memory reduction of SEP from full EP. } \label{tab:memory} 
-%\end{minipage}
-%\end{table} 
 
 \begin{table} 
 \caption{Datasets Used in the Experiments with Neural Networks.}\label{tab:datasets_neural_networks} 
@@ -360,6 +335,47 @@ Year Prediction MSD & 515,345 & 90 \tabularnewline
 \end{tabular}
 \end{table}
 
+\subsection{Comparing SEP, DSEP and full EP}
+\hl{The assumption we made in the main text to achieve SEP $\approx$ EP is that the contributions of each likelihood term to the posterior are very similar. We show further results here on the approximation produced by different EP methods when we believe there exists heterogeneity in data.}
+%
+\hl{We generated synthetic XOR classification data by sampling from 4 unit Gaussians with means $(3, 3)$, $(-3, -3)$, $(3, -3)$ and $(-3, 3)$, and labelling the clusters centered at the former two as negative examples (and positive for the others). The model $p(y_n|\bm{x}_n, \bm{\theta})$ is kernel probit regression using RBF kernel with width=$1.0$, which is the same as the model presented in Section 5.1 in the main text except that the features are changed to kernel representations. This makes the feature vectors high dimensional, and the local nature of kernels also makes them very different if the datapoints belong to different clusters. We generated $50*4$ test data and $\{10*4, 20*4, 50*4\}$ training data and ran SEP/DSEP/full EP to approximate the posterior distribution of $\bm{\theta}$. For DSEP we partitioned the dataset into 4 subsets according to the accociated centroid. Each experiments were repeated 10 times to collect average test data log-likilihood and classification error.}
+
+\hl{Table} \ref{tab:kernel} \hl{shows the quatitative numbers of performances and Figure} \ref{fig:kernel_increase_n} \hl{visualises the contuors of the probability $p(y = 1|\bm{x}, \mathcal{D})$ with the true posterior approximated by $q(\bm{\theta})$. Intestingly SEP is slightly better then the others on the classification error metric. But importantly EP achieves the best test log-likelihood numbers and in general DSEP produces very similar results (shown by both the table and the figure), meaning that even for small datasets running full EP is unnecessary. Also the three methods become indistinguishable when the size of the dataset $N$ increases.}
+
+
+\begin{table} 
+\small
+\centering \label{tab:kernel} 
+ \caption{ Average test results of all methods on kernel Probit regression.}
+\begin{tabular}{l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}
+	l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}}\hline 
+{} & \multicolumn{6}{c}{mean error} & \multicolumn{6}{c}{test log-likelihood} \\
+\bf{$N$}&\multicolumn{2}{c}{\bf{ SEP }}&\multicolumn{2}{c}{\bf{ DSEP }}&\multicolumn{2}{c}{\bf{ EP }} &\multicolumn{2}{c}{\bf{ SEP }}&\multicolumn{2}{c}{\bf{ DSEP }}&\multicolumn{2}{c}{\bf{ EP }} \\ \hline 
+%
+$10*4$&\bf{0.032}&\bf{0.0058}&0.055&0.0127&0.032&0.0097 
+	&-0.405&0.011&-0.380&0.010&\bf{-0.378}&\bf{0.009} \\
+%
+$20*4$&\bf{0.007}&\bf{0.0014}&0.008&0.0024&0.012&0.0031 
+	&-0.326&0.007&-0.320&0.006&\bf{-0.317}&\bf{0.003} \\
+%
+$50*4$&\bf{0.003}&\bf{0.0010}&0.003&0.0014&0.006&0.0009 
+	&-0.243&0.004&\bf{-0.233}&\bf{0.007}&-0.238&0.003 \\
+%
+%$100*4$&\bf{0.003}&\bf{0.0007}&0.003&0.0010&0.003&0.0010 
+%	&-0.183&0.003&-0.181&0.003&\bf{-0.180}&\bf{0.003} \\
+ \hline \end{tabular} 
+ \end{table} 
+
+
+\hl{We further add outliers to }
+
+\begin{figure}
+\centering
+\def\svgwidth{1\linewidth}
+\input{fig/increase_n_kernel.pdf_tex}
+\label{fig:kernel_increase_n}
+\caption{Comparing predictions of kernel Probit regression trained by SEP/DSEP/EP.}
+\end{figure}
 
 
 \subsubsection*{References}
