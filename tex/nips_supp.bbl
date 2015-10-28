@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
 \bibitem{amari:ig1985}
 Shun-ichi Amari.
@@ -17,6 +17,11 @@ Shun-ichi Amari, Shiro Ikeda, and Hidetoshi Shimokawa.
   approximation.
 \newblock {\em Advanced Mean Field Methods}, pages 241--257, 2001.
 
+\bibitem{hoffman:svi}
+Matthew~D. Hoffman, David~M. Blei, Chong Wang, and John~William Paisley.
+\newblock Stochastic variational inference.
+\newblock {\em Journal of Machine Learning Research}, 14(1):1303--1347, 2013.
+
 \bibitem{mandt:smoothedSVI}
 Stephan Mandt and David Blei.
 \newblock Smoothed gradients for stochastic variational inference.
@@ -33,5 +38,23 @@ Andrew Gelman, Aki Vehtari, Pasi Jylänki, Christian Robert, Nicolas Chopin,
 Minjie Xu, Balaji Lakshminarayanan, Yee~Whye Teh, Jun Zhu, and Bo~Zhang.
 \newblock Distributed bayesian posterior sampling via moment sharing.
 \newblock In {\em NIPS}, 2014.
+
+\bibitem{blei:lda}
+David~M Blei, Andrew~Y Ng, and Michael~I Jordan.
+\newblock Latent dirichlet allocation.
+\newblock {\em the Journal of machine Learning research}, 3:993--1022, 2003.
+
+\bibitem{heess:learning_messages}
+Nicolas Heess, Daniel Tarlow, and John Winn.
+\newblock Learning to pass expectation propagation messages.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  3219--3227, 2013.
+
+\bibitem{jitkrittum:kernel}
+Wittawat Jitkrittum, Arthur Gretton, Nicolas Heess, SM~Eslami, Balaji
+  Lakshminarayanan, Dino Sejdinovic, and Zolt{\'a}n Szab{\'o}.
+\newblock Kernel-based just-in-time learning for passing expectation
+  propagation messages.
+\newblock In {\em Uncertainty in Artificial Intelligence}, 2015.
 
 \end{thebibliography}

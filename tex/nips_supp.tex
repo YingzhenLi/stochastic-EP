@@ -274,7 +274,22 @@ It is also possible to have latent variables globally shared or shared in a data
 
 \section{Further experimental results}
 
-\hl{Miguel's paragraph on the PBP details}
+We perform neural network regression experiments with publicly available data sets and neural
+networks with one hidden layer.  Table~\ref{tab:datasets_neural_networks} lists the analyzed
+data sets and shows summary statistics.  We use neural networks with 50 hidden
+units in all cases except in the two largest ones, i.e., \emph{Year Prediction
+MSD} and \emph{Protein Structure}, where we use 100 hidden units.
+The different methods, SEP, EP and ADF were run by performing 40 passes over
+the available training data, updating the parameters of the posterior
+approximation after seeing each data point.  The data sets are split into
+random training and test sets with 90\% and 10\% of the data, respectively.
+This splitting process is repeated 20 times and the average test performance of
+each method is reported. In the two largest data sets, \emph{Year Prediction
+MSD} and \emph{Protein Structure}, we do the train-test splitting only one and
+five times respectively. The data sets are normalized so that the input
+features and the targets have zero mean and unit variance in the training set.
+The normalization on the targets is removed for prediction.
+
 
 We also provide the memory consumption details for experiments using probabilistic back-propagation (PBP) in Table \ref{tab:memory}. We observe substantial memory reductions by running SEP instead of EP, while still attaining similar accuracies. Especially for Year Prediction MSD dataset, which is a typical large-scale dataset both in the number of observations $N$ and the dimensionality $D$, SEP achieves tens of gigabytes savings. \hl{We performed the test for EP using a machine with more than 100GB RAM, while SEP only required 2.7GB memory, including the space of storing the dataset (1.9GB). These numbers reveal the incredibly huge memory requirement of full EP and further support SEP as a practical alternative in big data, big model settings.}
 
@@ -327,6 +342,25 @@ Year & 515,345 & 90 & \bf{65107MB}\\ \hline
 %\caption{ Memory reduction of SEP from full EP. } \label{tab:memory} 
 %\end{minipage}
 %\end{table} 
+
+\begin{table} 
+\caption{Datasets Used in the Experiments with Neural Networks.}\label{tab:datasets_neural_networks} 
+\centering 
+\begin{tabular}{lrr} 
+\hline  
+\textbf{Dataset} & $N$ & $d$ \tabularnewline 
+\hline 
+Kin8nm & 8192 & 8 \tabularnewline 
+Naval Propulsion & 11,934 & 16 \tabularnewline 
+Combined Cycle Power Plant & 9568 & 4 \tabularnewline 
+Protein Structure & 45,730 & 9 \tabularnewline 
+Wine Quality Red & 1599 & 11 \tabularnewline 
+Year Prediction MSD & 515,345 & 90 \tabularnewline 
+\hline 
+\end{tabular}
+\end{table}
+
+
 
 \subsubsection*{References}
 \renewcommand{\section}[2]{}
