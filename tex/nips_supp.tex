@@ -63,7 +63,7 @@ Cambridge, CB2 1PZ, UK \\
 We described the extensions of stochastic expectation propagation (SEP) in the main text, and we provide more details in this section.
 
 \subsection{Power EP and alpha-EP}
-The analysis of EP and variational inference (VI) relationships asks for an introduction of power EP (PEP). As a preparation let us consider the alpha-divergence\footnote{\hl{A little math can show the updates of alpha-EP using different existing definitions are equivalent, although the corresponding alpha may be different.}} introduced in \cite{amari:ig1985}
+The analysis of EP and variational inference (VI) relationships asks for an introduction of power EP (PEP). As a preparation let us consider the alpha-divergence\footnote{\hl{A little math can show the updates of alpha-EP using different existing alpha-divergence definitions are equivalent, although the corresponding alpha may be different.}} introduced in \cite{amari:ig1985}
 \begin{equation}
 D_{\alpha}[p(\bm{\theta}) || q(\bm{\theta})] = \frac{4}{1 - \alpha^2} 
 		\left( 1 - \int_{\bm{\theta}} p(\bm{\theta})^{ \frac{1+\alpha}{2}} q(\bm{\theta})^{ \frac{1- \alpha}{2}} d\bm{\theta} \right).
@@ -208,7 +208,7 @@ These two algorithms are also detailed in Algorithm \ref{alg:dsep} and \ref{alg:
 	\STATE compute cavity distribution \\$q_{-k}(\bm{\theta}) \propto q(\bm{\theta}) / f_k(\bm{\theta})$ 
 	\STATE compute tilted distribution \\$\tilde{p}_k(\bm{\theta}) \propto p(\mathcal{D}_k|\bm{\theta}) q_{-k}(\bm{\theta})$
 	\STATE moment matching: \\ \hspace{-3mm}$f_k(\bm{\theta}) \leftarrow \mathtt{proj}[\tilde{p}_k(\bm{\theta})] / q_{-k}(\bm{\theta}) $ \\
-\hspace{1mm}\\ \vspace{1.5mm} \hspace{1mm}\\
+\hspace{1mm}\\ \vspace{4.3mm} \hspace{1mm}\\
 \end{algorithmic}
 \end{algorithm}
 \end{minipage}
@@ -270,7 +270,7 @@ More formally, the cavity distribution is $q_{-n}(\bm{\theta}, \{ \bm{h}_n\}) \p
 \mathrm{KL}[ p_0(\bm{\theta}) f(\bm{\theta})^{N-1} p(\bm{x}_n | \bm{h}_n, \bm{\theta})p_0(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m) || p_0(\bm{\theta}) f(\bm{\theta})^{N-1} f'(\bm{\theta}) g_n(\bm{h}_n) \prod_{m\ne n} g_m(\bm{h}_m)] .\nonumber
 \end{equation}
 %
-with respect to $f'(\bm{\theta}) g_n(\bm{h}_n)$. Importantly, the terms involving $\prod_{m\ne n} g_m(\bm{h}_m)$ are cancelled, meaning that these factors \hl{do not contribute to the local approximation step. For simple models the moments of $\bm{h}_n$ can be computed analytically given $q_{-1}(\bm{\theta})$, thus $g_n{\bm{h}_n}$ is never stored in memory resulting in a reduced memory footprint by a factor of $N$ again. However in practice people may prefer maintaining the $g$ factors in memory, if the moment computation requires another optimisation inner-loop (which might be more expensive than the moment matching step itself). Examples include latent Dirichlet allocation} \cite{blei:lda} \hl{that has a hierachy of latent variables, where VI methods also store variational $q$ distributions for some of the hidden variables. One potential recipe in this scenario is to learn the moments/messages passed in each SEP step, where interested readers are directed to} \cite{heess:learning_messages, jitkrittum:kernel}.
+with respect to $f'(\bm{\theta}) g_n(\bm{h}_n)$. Importantly, the terms involving $\prod_{m\ne n} g_m(\bm{h}_m)$ are cancelled, meaning that these factors \hl{do not contribute to the local approximation step. For simple models the moments of $\bm{h}_n$ can be computed analytically given $q_{-1}(\bm{\theta})$, thus $g_n(\bm{h}_n)$ is never stored in memory resulting in a reduced memory footprint by a factor of $N$ again. However in practice people may prefer maintaining the $g$ factors in memory, if the moment computation requires another optimisation inner-loop (which might be more expensive than the moment matching step itself). Examples include latent Dirichlet allocation} \cite{blei:lda} \hl{that has a hierachy of latent variables, where VI methods also store variational $q$ distributions for some of the hidden variables. One potential recipe in this scenario is to learn the moments/messages passed in each SEP step, where interested readers are directed to} \cite{heess:learning_messages, jitkrittum:kernel}.
 
 It is also possible to have latent variables globally shared or shared in a data piece $\mathcal{D}_k$. But we can also extend SEP to these latent variables accordingly, which still provides computation gains in space complexity. In mathematical forms, assume $\bm{h}_k$ a latent variable shared in $\mathcal{D}_k$. Then we construct $q(\bm{h}_k) \propto p_0(\bm{h}_k) g_k(\bm{h}_k)^{N_k}$ to approximate its posterior. This procedure still reduces memory by a factor of $N/K$.
 
@@ -281,72 +281,56 @@ It is also possible to have latent variables globally shared or shared in a data
 We perform neural network regression experiments with publicly available data sets and neural networks with one hidden layer.  Table~\ref{tab:datasets_neural_networks} lists the analyzed data sets and shows summary statistics.  We use neural networks with 50 hidden units in all cases except in the two largest ones, i.e., \emph{Year Prediction
 MSD} and \emph{Protein Structure}, where we use 100 hidden units. The different methods, SEP, EP and ADF were run by performing 40 passes over the available training data, updating the parameters of the posterior approximation after seeing each data point.  The data sets are split into random training and test sets with 90\% and 10\% of the data, respectively. This splitting process is repeated 20 times and the average test performance of each method is reported. In the two largest data sets, \emph{Year Prediction MSD} and \emph{Protein Structure}, we do the train-test splitting only one and five times respectively. The data sets are normalized so that the input features and the targets have zero mean and unit variance in the training set. The normalization on the targets is removed for prediction.
 
-We also provide the memory consumption details for experiments using probabilistic back-propagation (PBP) in Table \ref{tab:memory}. We observe substantial memory reductions by running SEP instead of EP, while still attaining similar accuracies. Especially for Year Prediction MSD dataset, which is a typical large-scale dataset both in the number of observations $N$ and the dimensionality $D$, SEP achieves tens of gigabytes savings. \hl{We performed the test for EP using a machine with more than 100GB RAM, while SEP only required 2.7GB memory, including the space of storing the dataset (1.9GB). These numbers reveal the incredibly huge memory requirement of full EP and further support SEP as a practical alternative in big data, big model settings.}
-
-\subsection{Stochastic EP with sampling protocal}
-
-Although not a main purpuse, we further test the performance of SEP with sampling methods to compute moments \footnote{code adjusted from \texttt{ep-stan}: \url{https://github.com/gelman/ep-stan}}. We re-use the settings of probit regression but change the probit unit to sigmoid function, making the moment projection analytically intractable. We randomly partition the dataset into $K = 20$ subsets $\{\mathcal{D}_k\}$, construct the approximate posterior with local factors over the subsets, and tie them in SEP/AEP as before. \hl{Note that we perform sequential computations for DEP and AEP although they are ideally suited for paralel computing.} Again as presented in Fig. \ref{fig:sep_logit}, SEP performs almost as well as EP, which further justifies SEP even with sampling methods. Also AEP is indistinguishable from DEP, but it reduces memory by a factor of $K$.
-
-\begin{figure}
-\centering
-%
-\begin{minipage}[!t]{0.5\linewidth}
-\subfigure[\label{tab:memory}]{
-
-\begin{tabular}{lrrr}\hline \bf{Dataset}& $N$ & $D$ & MB reduction\\ \hline 
-Kin8nm & 8,192 & 8 & 58MB \\ 
-Naval & 11,934 & 16 & 147MB\\ 
-Power Plant & 9,568 & 4 & 37MB\\ 
-Protein & 45,730 & 9 & \bf{694MB}\\ 
-Wine & 1,599 & 11 & 14MB\\ 
-Year & 515,345 & 90 & \bf{65107MB}\\ \hline 
-\hspace{1mm}\\ \vspace{1.0mm} \hspace{1mm}\\
-\end{tabular}
-} 
-\end{minipage}
-%
-\hspace{0.3in}
-%
-\begin{minipage}[!t]{0.35\linewidth}
-\def\svgwidth{0.7\linewidth}
-\subfigure[\label{fig:sep_logit}]{
-\input{fig/sep_logit.pdf_tex}
-}
-\end{minipage}
-%
-\caption{(a) Memory reduction figures on regression datasets. (b) Performance of EP methods on Bayesian logistic regression with sampling moment computations.}
-\end{figure}
+We also provide the memory consumption details for experiments using probabilistic back-propagation (PBP) in Table \ref{tab:datasets_neural_networks}. We observe substantial memory reductions by running SEP instead of EP, while still attaining similar accuracies. Especially for Year Prediction MSD dataset, which is a typical large-scale dataset both in the number of observations $N$ and the dimensionality $D$, SEP achieves tens of gigabytes savings. \hl{We performed the test for EP using a machine with more than 100GB RAM, while SEP only required 2.7GB memory, including the space of storing the dataset (1.9GB). These numbers reveal the incredibly huge memory requirement of full EP and further support SEP as a practical alternative in big data, big model settings.}
 
 
 \begin{table} 
-\caption{Datasets Used in the Experiments with Neural Networks.}\label{tab:datasets_neural_networks} 
+\caption{Datasets Used in the Experiments with Neural Networks. The memory numbers reported include dataset storage and temporal maintainance of computation graphs in Theano ($\sim100MB$).}
+\label{tab:datasets_neural_networks} 
 \centering 
-\begin{tabular}{lrr} 
+\begin{tabular}{lrrrrr} 
 \hline  
-\textbf{Dataset} & $N$ & $d$ \tabularnewline 
+\textbf{Dataset} & $N$ & $D$ & MB (EP) & MB (SEP) & MB reduced \tabularnewline 
 \hline 
-Kin8nm & 8192 & 8 \tabularnewline 
-Naval Propulsion & 11,934 & 16 \tabularnewline 
-Combined Cycle Power Plant & 9568 & 4 \tabularnewline 
-Protein Structure & 45,730 & 9 \tabularnewline 
-Wine Quality Red & 1599 & 11 \tabularnewline 
-Year Prediction MSD & 515,345 & 90 \tabularnewline 
+Kin8nm & 8192 & 8 & 168.23 & 109.76 & 58.47 \tabularnewline 
+Naval Propulsion & 11,934 & 16 & 261.75 & 113.92 & 147.83 \tabularnewline 
+Combined Cycle Power Plant & 9568 & 4 & 148.70 & 110.99 & 37.71 \tabularnewline 
+Protein Structure & 45,730 & 9 & 815.55 & 121.52 & 694.02 \tabularnewline 
+Wine Quality Red & 1599 & 11 & 122.21 & 107.90 & 14.30 \tabularnewline 
+\bf{Year Prediction MSD} & \bf{515,345} & \bf{90} & \bf{67837.90} & \bf{2730.55} & \bf{65107.34} \tabularnewline 
 \hline 
 \end{tabular}
 \end{table}
 
-\subsection{Comparing SEP, DSEP and full EP}
-\hl{The assumption we made in the main text to achieve SEP $\approx$ EP is that the contributions of each likelihood term to the posterior are very similar. We show further results here on the approximation produced by different EP methods when we believe there exists heterogeneity in data.}
-%
-\hl{We generated synthetic XOR classification data by sampling from 4 unit Gaussians with means $(3, 3)$, $(-3, -3)$, $(3, -3)$ and $(-3, 3)$, and labelling the clusters centered at the former two as negative examples (and positive for the others). The model $p(y_n|\bm{x}_n, \bm{\theta})$ is kernel probit regression using RBF kernel with width=$1.0$, which is the same as the model presented in Section 5.1 in the main text except that the features are changed to kernel representations. This makes the feature vectors high dimensional, and the local nature of kernels also makes them very different if the datapoints belong to different clusters. We generated $50*4$ test data and $\{10*4, 20*4, 50*4\}$ training data and ran SEP/DSEP/full EP to approximate the posterior distribution of $\bm{\theta}$. For DSEP we partitioned the dataset into 4 subsets according to the accociated centroid. Each experiments were repeated 10 times to collect average test data log-likilihood and classification error.}
 
-\hl{Table} \ref{tab:kernel} \hl{shows the quatitative numbers of performances and Figure} \ref{fig:kernel_increase_n} \hl{visualises the contuors of the probability $p(y = 1|\bm{x}, \mathcal{D})$ with the true posterior approximated by $q(\bm{\theta})$. Intestingly SEP is slightly better then the others on the classification error metric. But importantly EP achieves the best test log-likelihood numbers and in general DSEP produces very similar results (shown by both the table and the figure), meaning that even for small datasets running full EP is unnecessary. Also the three methods become indistinguishable when the size of the dataset $N$ increases.}
+\subsection{Stochastic EP with sampling protocal}
+
+Although not a main purpuse, we further test the performance of SEP with sampling methods to compute moments \footnote{code adjusted from \texttt{ep-stan}: \url{https://github.com/gelman/ep-stan}}. We re-use the settings of probit regression but change the probit unit to sigmoid function, making the moment projection analytically intractable. We randomly partition the dataset into $K = 20$ subsets $\{\mathcal{D}_k\}$, construct the approximate posterior with local factors over the subsets, and tie them in SEP/AEP as before. \hl{Note that we perform sequential computations for DEP and AEP although they are ideally suited for paralel computing.} Again as presented in Figure \ref{fig:sep_logit}, SEP performs almost as well as EP, which further justifies SEP even with sampling methods. Also AEP is indistinguishable from DEP, but it reduces memory by a factor of $K$.
+
+\begin{figure}
+\centering
+\def\svgwidth{0.3\linewidth}
+\input{fig/sep_logit.pdf_tex}
+\caption{Performance of EP methods on Bayesian logistic regression with sampling moment computations.}
+\label{fig:sep_logit}
+\end{figure}
+
+
+\subsection{Further Comparisons for SEP, DSEP and full EP}
+\hl{The assumption we made in the main text to achieve SEP $\approx$ full EP is that the contributions of each likelihood term to the posterior are very similar. We show further results here on the approximation produced by different EP methods when we believe there exists heterogeneity in data.}
+%
+\hl{We generated synthetic XOR classification data by sampling from 4 unit Gaussians with means $(3, 3)$, $(-3, -3)$, $(3, -3)$ and $(-3, 3)$, and labelling the clusters centered at the former two as negative examples (and positive for the others). The model $p(y_n|\bm{x}_n, \bm{\theta})$ is kernel probit regression using RBF kernel with width $l=1.0$, which is the same as the model presented in Section 5.1 in the main text except that the features are changed to kernel representations. This makes the feature vectors high dimensional, and the local nature of kernels also makes them very different if the datapoints belong to different clusters. We generated $50*4$ test data and $\{10*4, 20*4, 50*4\}$ training data and ran SEP/DSEP/full EP to approximate the posterior distribution of $\bm{\theta}$. For DSEP we partitioned the dataset into 4 subsets according to the accociated centroid. Each experiments were repeated 10 times to collect average test data log-likilihood and classification error.}
+
+\hl{Table} \ref{tab:kernel} \hl{shows the quatitative numbers of performances and Figure} \ref{fig:kernel_increase_n} \hl{visualises the contuors of probability $p(y = 1|\bm{x}, \mathcal{D})$ with true posterior approximated by $q(\bm{\theta})$. Intestingly SEP is slightly better then the others on the classification error metric. But importantly EP achieves the best test log-likelihood numbers and in general DSEP produces very similar results (shown by both the table and the figure), meaning that even for small datasets running full EP might be unnecessary. Also the three methods become indistinguishable when the size of the dataset $N$ increases. We argue the main reason is that the posterior contributions are getting similar since more datapoints are observed in the circle of kernel width.}
+
+\hl{We further tested the robustness of all three methods to outliers. We reused the settings above and randomly flipped $10\%$ labels of training data. Qualitative results in Figure} \ref{fig:kernel_flip} \hl{show that SEP is almost as robust as DSEP/EP in this example. We had tried different types of outliers and failed to find the cases where EP/DSEP significantly outperforms SEP. Future work should answer the questions that when SEP gives bad approximations and whether it fails in the same way as EP fails.}
 
 
 \begin{table} 
 \small
-\centering \label{tab:kernel} 
+\centering
  \caption{ Average test results of all methods on kernel Probit regression.}
+  \label{tab:kernel} 
 \begin{tabular}{l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}
 	l@{\ica}r@{$\pm$}l@{\ica}r@{$\pm$}}\hline 
 {} & \multicolumn{6}{c}{mean error} & \multicolumn{6}{c}{test log-likelihood} \\
@@ -361,23 +345,26 @@ $20*4$&\bf{0.007}&\bf{0.0014}&0.008&0.0024&0.012&0.0031
 $50*4$&\bf{0.003}&\bf{0.0010}&0.003&0.0014&0.006&0.0009 
 	&-0.243&0.004&\bf{-0.233}&\bf{0.007}&-0.238&0.003 \\
 %
-%$100*4$&\bf{0.003}&\bf{0.0007}&0.003&0.0010&0.003&0.0010 
-%	&-0.183&0.003&-0.181&0.003&\bf{-0.180}&\bf{0.003} \\
  \hline \end{tabular} 
  \end{table} 
-
-
-\hl{We further add outliers to }
 
 \begin{figure}
 \centering
 \def\svgwidth{1\linewidth}
 \input{fig/increase_n_kernel.pdf_tex}
+\caption{Comparing predictions of kernel Probit regression trained by SEP/DSEP/EP, with increasing training data size $N$.}
 \label{fig:kernel_increase_n}
-\caption{Comparing predictions of kernel Probit regression trained by SEP/DSEP/EP.}
 \end{figure}
 
+\begin{figure}
+\centering
+\def\svgwidth{1\linewidth}
+\input{fig/flip_kernel.pdf_tex}
+\caption{Comparing predictions of kernel Probit regression trained by SEP/DSEP/EP, with $10\%$ labels flipped.}
+\label{fig:kernel_flip}
+\end{figure}
 
+\newpage
 \subsubsection*{References}
 \renewcommand{\section}[2]{}
 \small

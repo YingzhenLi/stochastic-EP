@@ -1,6 +1,6 @@
 \section{Algorithmic extensions to SEP and theoretical results}
 %
-SEP has been motivated from a practical perspective by the limitations inherent in EP and ADF. In this section we extend SEP in four orthogonal directions and through these extensions relate SEP to SVI. Many of the algorithms described in this section are summarised in figure \ref{fig:relationship-algorithms} and they are detailed in the supplementary material.
+SEP has been motivated from a practical perspective by the limitations inherent in EP and ADF. In this section we extend SEP in four orthogonal directions and through these extensions relate SEP to SVI. Many of the algorithms described in this section are summarised in Figure \ref{fig:relationship-algorithms} and they are detailed in the supplementary material.
 
 %
 \subsection{Parallel SEP: relating the EP fixed points to SEP}
@@ -11,7 +11,7 @@ The SEP algorithm outlined above approximates one likelihood at a time which can
 
 For $M=1$ parallel SEP reduces to the original SEP algorithm. For $M=N$ parallel SEP is equivalent to the so-called Averaged EP algorithm proposed in \cite{barthelme:aep} as a theoretical tool to study the convergence properties of normal EP. This work showed that, under fairly restrictive conditions (likelihood functions that are log-concave and vary slowly as a function of the parameters), AEP converges to the same fixed points as EP in the large data limit ($N \rightarrow \infty$).
 
-There is another illuminating and arguably more direct connection between SEP and AEP. Since SEP's approximating factor $f(\bm{\theta})$ converges to the geometric average of the intermediate factors $\bar{f}(\bm{\theta}) \propto [\prod_{n=1}^N f_n(\bm{\theta})]^{\frac{1}{N}}$, SEP converges to the same fixed points as AEP, and therefore under certain conditions \cite{barthelme:aep}, to the same fixed points as EP. 
+There is another illuminating and arguably more direct connection between SEP and AEP. Since SEP's approximating factor $f(\bm{\theta})$ converges to the geometric average of the intermediate factors $\bar{f}(\bm{\theta}) \propto [\prod_{n=1}^N f_n(\bm{\theta})]^{\frac{1}{N}}$, SEP converges to the same fixed points as AEP, and therefore under certain conditions \cite{barthelme:aep}, to the same fixed points as EP. \hl{In practice decreasing learning rates, e.g. $\{\epsilon_t\}$ satisfying $\sum_t \epsilon_t = \infty$, $\sum_t \epsilon_t^2 < \infty$, may be used to achieve convergence.}
 %
 It is possible that there are more direct relationships between EP and SEP's dynamics, but that is still an open question.
 

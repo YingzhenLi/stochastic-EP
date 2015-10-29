@@ -5,11 +5,35 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
    id="svg2"
    viewBox="0 0 850.3937 425.19685"
    height="120mm"
-   width="240mm">
+   width="240mm"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="relationship-algorithms.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1366"
+     inkscape:window-height="692"
+     id="namedview253"
+     showgrid="false"
+     inkscape:zoom="0.5"
+     inkscape:cx="425.19684"
+     inkscape:cy="212.59842"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
   <defs
      id="defs4">
     <marker
@@ -453,7 +477,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -535,54 +559,10 @@
          style="fill:#8686bf;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
          id="path11760" />
     </g>
-    <text
-       id="text3336"
-       y="434.64142"
-       x="-632.39386"
-       style="font-style:normal;font-weight:normal;font-size:12.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       xml:space="preserve"><tspan
-         y="434.64142"
-         x="-632.39386"
-         id="tspan3338">SEP</tspan></text>
-    <text
-       id="text3382"
-       y="531.46613"
-       x="-739.05804"
-       style="font-style:normal;font-weight:normal;font-size:15px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       xml:space="preserve"><tspan
-         y="531.46613"
-         x="-739.05804"
-         id="tspan3384">EP</tspan></text>
-    <path
-       id="path3386"
-       d="m -638.10815,441.78428 -76.42857,78.57143"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Arrow2Mstart);marker-end:url(#Arrow2Mend)" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker12502);marker-end:url(#marker12632)"
        d="M 238.34105,945.61055 385.76962,902.03912"
        id="path4886" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:15px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="-520.62946"
-       y="533.18042"
-       id="text5310"><tspan
-         id="tspan5312"
-         x="-520.62946"
-         y="533.18042">AEP</tspan></text>
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker5364);marker-end:url(#marker5410)"
-       d="m -620.10815,411.78428 -0.71428,-88.57143"
-       id="path5362" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:12.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="-636.53674"
-       y="312.49854"
-       id="text6590"><tspan
-         id="tspan6592"
-         x="-636.53674"
-         y="312.49854">SVMP</tspan></text>
     <text
        id="text6594"
        y="782.28064"
@@ -697,62 +677,6 @@
          id="tspan7062"
          x="445.20468"
          y="721.82483">a=-1</tspan></text>
-    <path
-       id="path7162"
-       d="m -728.10815,498.78428 -0.71428,-88.57143"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker7164);marker-end:url(#marker7222)" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:12.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="-743.39386"
-       y="397.64142"
-       id="text8690"><tspan
-         id="tspan8692"
-         x="-743.39386"
-         y="397.64142">VMP</tspan></text>
-    <path
-       id="path8706"
-       d="m -730.10815,375.78428 -0.71428,-88.57143"
-       style="fill:none;fill-rule:evenodd;stroke:#c8c8c8;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker8708);marker-end:url(#marker8778)" />
-    <path
-       id="path9178"
-       d="m -621.10815,290.78428 -0.71428,-88.57143"
-       style="fill:none;fill-rule:evenodd;stroke:#c8c8c8;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker9180);marker-end:url(#marker9262)" />
-    <text
-       id="text9674"
-       y="192.49855"
-       x="-634.53674"
-       style="font-style:normal;font-weight:normal;font-size:12.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       xml:space="preserve"><tspan
-         y="192.49855"
-         x="-634.53674"
-         id="tspan9676">SVI</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:12.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="-738.53674"
-       y="275.49854"
-       id="text9774"><tspan
-         id="tspan9776"
-         x="-738.53674"
-         y="275.49854">VI</tspan></text>
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker9794);marker-end:url(#marker9888)"
-       d="m -512.10815,500.78428 -0.71428,-88.57143"
-       id="path9782" />
-    <text
-       id="text9784"
-       y="399.64142"
-       x="-521.39386"
-       style="font-style:normal;font-weight:normal;font-size:12.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       xml:space="preserve"><tspan
-         y="399.64142"
-         x="-521.39386"
-         id="tspan9786">VI</tspan></text>
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker10702);marker-end:url(#marker10808)"
-       d="M -302.93953,451.68377 -379.3681,530.2552"
-       id="path10696" />
     <path
        id="path10698"
        d="m 602.91299,793.53567 c 58.51773,-16.78086 98.695,1.06756 133.44005,16.6466"
@@ -1015,51 +939,6 @@
        id="path4549" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:12.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="977.23474"
-       y="730.6994"
-       id="text4607"><tspan
-         id="tspan4609"
-         x="977.23474"
-         y="730.6994">AEP: Averaged EP</tspan><tspan
-         x="977.23474"
-         y="746.3244"
-         id="tspan4611">AVMP: Averaged VMP</tspan><tspan
-         x="977.23474"
-         y="761.9494"
-         id="tspan4613">EP: Expectation Propagation</tspan><tspan
-         x="977.23474"
-         y="777.5744"
-         id="tspan4615">par-EP: EP with parallel updates</tspan><tspan
-         x="977.23474"
-         y="793.1994"
-         id="tspan4617">par-SEP: SEP with parallel updates</tspan><tspan
-         x="977.23474"
-         y="808.8244"
-         id="tspan4619">par-VMP: VMP with parallel updates</tspan><tspan
-         x="977.23474"
-         y="824.4494"
-         id="tspan4621">PEP: Power EP</tspan><tspan
-         x="977.23474"
-         y="840.0744"
-         id="tspan4623">SEP: Stochastic EP</tspan><tspan
-         x="977.23474"
-         y="855.6994"
-         id="tspan4625">SVMP: Stochastic VMP</tspan><tspan
-         x="977.23474"
-         y="871.3244"
-         id="tspan4627">VI:  Variational Inference</tspan><tspan
-         x="977.23474"
-         y="886.9494"
-         id="tspan4629">VMP: Variational message passing</tspan><tspan
-         x="977.23474"
-         y="902.5744"
-         id="tspan4631" /><tspan
-         x="977.23474"
-         y="918.1994"
-         id="tspan4633" /></text>
-    <text
-       xml:space="preserve"
        style="font-size:12.5px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:sans-serif"
        x="474.21542"
        y="993.53998"
@@ -1087,56 +966,66 @@
          id="tspan4661" /></text>
     <path
        id="path4969"
-       d="m 589.91082,886.1921 57.27565,-0.70711"
-       style="fill:none;stroke:#000000;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#marker4971)" />
+       d="m 569.91082,886.1921 57.27565,-0.70711"
+       style="fill:none;stroke:#000000;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#marker4971)"
+       inkscape:connector-curvature="0" />
     <text
        id="text4975"
        y="913.02051"
-       x="666.15704"
+       x="646.15704"
        style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:sans-serif"
-       xml:space="preserve"><tspan
+       xml:space="preserve"
+       sodipodi:linespacing="125%"><tspan
          style="font-size:14px"
          id="tspan4979"
          y="913.02051"
-         x="666.15704">same in expectation</tspan></text>
+         x="646.15704">same (stochastic methods)</tspan><tspan
+         style="font-size:14px"
+         y="913.02051"
+         x="646.15704"
+         id="tspan3234" /></text>
     <path
        style="fill:none;stroke:#0000ff;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#marker4989)"
-       d="m 590.49661,909.64795 57.27565,-0.70711"
-       id="path4981" />
+       d="m 570.49661,909.64795 57.27565,-0.70711"
+       id="path4981"
+       inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:sans-serif"
-       x="666.15704"
+       x="646.15704"
        y="887.76923"
-       id="text4983"><tspan
+       id="text4983"
+       sodipodi:linespacing="125%"><tspan
          style="font-size:14px"
          id="tspan4985"
-         x="666.15704"
+         x="646.15704"
          y="887.76923">same</tspan><tspan
-         x="666.15704"
+         x="646.15704"
          y="905.26923"
          id="tspan4987" /></text>
     <path
        id="path5020"
-       d="m 591.20372,934.98247 57.27565,-0.70711"
-       style="fill:none;stroke:#006000;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#marker5028)" />
+       d="m 571.20372,934.98247 57.27565,-0.70711"
+       style="fill:none;stroke:#006000;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#marker5028)"
+       inkscape:connector-curvature="0" />
     <text
        id="text5022"
        y="937.10376"
-       x="666.86414"
+       x="646.86414"
        style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:sans-serif"
-       xml:space="preserve"><tspan
+       xml:space="preserve"
+       sodipodi:linespacing="125%"><tspan
          style="font-size:14px"
          y="937.10376"
-         x="666.86414"
+         x="646.86414"
          id="tspan5024">same in large data limit</tspan><tspan
          style="font-size:14px"
          id="tspan5093"
          y="954.60376"
-         x="666.86414">(conditions apply)</tspan><tspan
+         x="646.86414">(conditions apply)</tspan><tspan
          id="tspan5026"
          y="972.10376"
-         x="666.86414" /></text>
+         x="646.86414" /></text>
     <text
        xml:space="preserve"
        style="font-size:12.5px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:sans-serif"
